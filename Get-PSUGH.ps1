@@ -13,6 +13,10 @@ function Get-PSUGH
     Get-PSUGH
     Shows the next appointment for PowerShell Usergroup Hannover
     meeting
+    
+    .EXAMPLE
+    iex $($(curl https://git.io/vHNhk))
+    Download and run Get-PSUGH directly from GitHub
 
     .LINK
     http://www.psugh.de
