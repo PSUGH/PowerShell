@@ -34,3 +34,4 @@ Mit folgenden Themen:
   $out
   $json.Themen
 }
+Get-PSUGH
