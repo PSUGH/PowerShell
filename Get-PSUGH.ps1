@@ -20,7 +20,6 @@ function Get-PSUGH
 
     .LINK
     http://www.psugh.de
-
   #>
 
   $json = ConvertFrom-Json -InputObject (Invoke-WebRequest -Uri 'https://psugh.github.io/data.json')
