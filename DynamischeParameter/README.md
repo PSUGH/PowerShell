@@ -1,6 +1,6 @@
 # Dynamische Parameter #
 
-Mir dynamischen Parametern lassen sich zusätzliche Parameter einblenden, die vom Inhalt anderer Parameter abhängen. Sie 
+Mit dynamischen Parametern lassen sich zusätzliche Parameter einblenden, die vom Inhalt anderer Parameter abhängen. Sie 
 benötigen allerdings einen nicht unerheblichen Programmieraufwand.
 
 Sie werden von Cmdlets immer dann eingesetzt, wenn sie in einem bestimmten Zusammenhang sinnvoll sind, z.B. bei _Get-ChildItem_: 
