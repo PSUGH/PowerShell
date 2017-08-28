@@ -6,6 +6,5 @@ Hier findest du Slides und Quellcode aus den verschiedenen Talks.
 
 ## Moderne Datenbank Administration mit dbatools mit Marco Kleinert
 
-```
 Die dbatools sind ein PowerShell-Modul mit über 200 cmdlets für Administration, Migration und "best practice" Aufgaben. Selbst komplexe Aufgaben, wie die Migration einer oder mehrere MSSQL Instanzen, können damit im Handumdrehen erledigt werden. Wir zeigen in diesem Flash-Talk, wie sich bestimmte Aufgaben leicht durch die entsprechenden Kommandos automatisieren lassen und so die Arbeit eines DBAs deutlich erleichtert wird.
-```
+
