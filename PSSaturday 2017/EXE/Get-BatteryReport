@@ -1,0 +1,23 @@
+function Get-BatteryReport 
+{
+  $DesignedCapacity    = (Get-CimInstance -Namespace 'root\wmi' -Query 'select DeviceName, ManufactureName, Chemistry, DesignedCapacity from BatteryStaticData').DesignedCapacity
+  $ManufactureName     = (Get-CimInstance -Namespace 'root\wmi' -Query 'select DeviceName, ManufactureName, Chemistry, DesignedCapacity from BatteryStaticData').ManufactureName
+  $DeviceName          = (Get-CimInstance -Namespace 'root\wmi' -Query 'select DeviceName, ManufactureName, Chemistry, DesignedCapacity from BatteryStaticData').DeviceName
+  $FullChargedCapacity = (Get-CimInstance -Namespace 'root\wmi' -Query 'select FullChargedCapacity from BatteryFullChargedCapacity').FullChargedCapacity
+
+  New-Object Psobject -Property @{
+    DesignedCapacity    = $DesignedCapacity
+    FullChargedCapacity = $FullChargedCapacity
+    Capacity            = '{0:n2} % ' -f $(($FullChargedCapacity * 100) / $DesignedCapacity)
+    ManufactureName     = $ManufactureName
+    DeviceName          = $DeviceName
+    ChargeRemaining     = "$((Get-CimInstance win32_battery).EstimatedChargeRemaining) %"
+    Status              = $(Get-CimInstance win32_battery).Status
+    Caption             = $(Get-CimInstance win32_battery).Caption
+    DeviceID            = $($(Get-CimInstance win32_battery).DeviceID).Substring(0,18)
+    SystemName          = $(Get-CimInstance win32_battery).SystemName
+  } 
+}
+
+Get-BatteryReport #| Select-Object Caption,Capacity,Status # | ConvertTo-Csv -UseCulture -NoTypeInformation #| Out-Gridview
+Read-Host
