@@ -1,0 +1,52 @@
+$source = @"
+using System.Runtime.InteropServices;
+using System.Management.Automation;
+using System.Collections.ObjectModel; //  used later for execution output
+
+namespace PowerShellExecutionLibrary
+{
+    [ComVisible(true)] // Defined as COM Visible
+    public class Program
+    {
+        [ComVisible(true)] // Defined as COM Visible
+        public string getValue(string script)
+        {
+            PowerShell PowerShellInstance = PowerShell.Create();
+            PowerShellInstance.AddScript(script);
+            Collection<PSObject> PSOutput = PowerShellInstance.Invoke();
+
+            return "Done";
+        }  
+    }
+}
+"@
+
+$vbs = @'
+Dim myObj
+
+Set myObj = CreateObject("PowerShellExecutionLibrary.Program")
+myObj.getValue("Get-Service | where {$_.Status -eq 'Stopped'} | Out-Gridview -title 'Show Services' -PassThru")
+'@
+
+$executeable = '{0}csc.exe' -f $([System.Runtime.InteropServices.RuntimeEnvironment]::GetRuntimeDirectory())
+$reference   = 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Management.Automation\v4.0_3.0.0.0__31bf3856ad364e35\System.Management.Automation.dll'
+$outfile     = '{0}\MyPowerVBS.dll' -f $PSScriptRoot
+$sourcefile  = '{0}\MyPowerVBS.cs' -f $PSScriptRoot
+$parameters  = ('/reference:{0} /target:library /out:{1} {2} /platform:anycpu' -f $reference, $outfile, $sourcefile)
+
+$source | Out-File -FilePath $sourcefile -Encoding ASCII
+    
+Start-Process -FilePath $executeable -ArgumentList $parameters -Wait
+
+# COM-Restrierung
+
+$regasm   = '{0}RegAsm.exe' -f $([System.Runtime.InteropServices.RuntimeEnvironment]::GetRuntimeDirectory())
+$regparam = ('/codebase /regfile {0}' -f $outfile)
+
+Start-Process -FilePath $regasm -ArgumentList $regparam -Wait
+
+$regfile = '{0}\MyPowerVBS.reg' -f $PSScriptRoot
+
+Get-Content $regfile | Out-String | Foreach-Object {$_.Replace("HKEY_CLASSES_ROOT","HKEY_CURRENT_USER\Software\Classes")} | Set-Content $regfile
+
+$vbs | Set-Content -Path $('{0}\MyPowerVBS.vbs' -f $PSScriptRoot)
