@@ -11,6 +11,7 @@ param
   
 if ($Install)
 {
+# Der Name unsers Dienstes ist der Name des Skripts
 $servicename = $($($MyInvocation.MyCommand.Name).Split('.')[0])
 $source = @"
 using System.ServiceProcess;
@@ -50,21 +51,21 @@ namespace MyService
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
                 process.Start();
-                //// do some other things while you wait...
-                System.Threading.Thread.Sleep(10000); // simulate doing other things...
-                process.StandardInput.WriteLine("exit"); // tell console to exit
+                System.Threading.Thread.Sleep(10000);
+                process.StandardInput.WriteLine("exit"); // Die Console soll sich nach Ausführung beenden
                 if (!process.HasExited)
                 {
-                    process.WaitForExit(120000); // give 2 minutes for process to finish
+                    process.WaitForExit(120000); // Gibt dem Dienst 2 Minuten, sich zu beenden ...
                     if (!process.HasExited)
                     {
-                        process.Kill(); // took too long, kill it off
+                        process.Kill(); // ... wenn das zu lange dauert, kill ihn. 
                     }
                 }
             }
         }
         protected override void OnContinue()
         {
+            // Der Dienst schreibt in die Ereignisanzeige, hier unter "Anwendungen"
             using (EventLog eventLog = new EventLog("Application"))
             {
                 if (!EventLog.SourceExists("$servicename"))
@@ -98,7 +99,8 @@ namespace MyService
             service.ServiceName = "$servicename";
             service.DisplayName = "$servicename";
             service.Description = "Windows-Dienst $servicename";
-
+            
+            // Der Dienst läuft mit den höchsten Rechten
             process.Account = ServiceAccount.LocalSystem;
 
             Installers.Add(process);
@@ -107,25 +109,30 @@ namespace MyService
     }
 }
 "@
-    Add-Type -TypeDefinition $source -Language CSharp -OutputAssembly "$PSScriptRoot\$servicename.exe" -OutputType ConsoleApplication -ReferencedAssemblies "System.ServiceProcess","System.Configuration.Install","System.ComponentModel"
-    Start-Process -FilePath "$PSScriptRoot\InstallUtil.exe" -ArgumentList "$PSScriptRoot\$servicename.exe" -Wait
-    Start-Service $servicename
-    break
-  }
+# Die EXE-Datei des Dienstes wird mit den notwendigen Verweisen kompiliert, installiert und gestartet
+Add-Type -TypeDefinition $source -Language CSharp -OutputAssembly "$PSScriptRoot\$servicename.exe" -OutputType ConsoleApplication -ReferencedAssemblies "System.ServiceProcess","System.Configuration.Install","System.ComponentModel"
+# Die InstallUtil.exe liegt in diesem Beispiel im selben Pfad wie das Skript, man findet es sonst unter den 
+# Programmen des verwendeten .NET-Frameworks, z.B. C:\Windows\Microsoft.NET\Framework\v4.0.30319
+Start-Process -FilePath "$PSScriptRoot\InstallUtil.exe" -ArgumentList "$PSScriptRoot\$servicename.exe" -Wait
+Start-Service $servicename
+break
+}
   
-  if ($Uninstall)
-  {
-    Stop-Service $servicename
-    Start-Process -FilePath "$PSScriptRoot\InstallUtil.exe" -ArgumentList "-u $PSScriptRoot\$servicename.exe" -Wait
-  }
+if ($Uninstall)
+{
+  Stop-Service $servicename
+  # InstallUtil.exe mit Parameter -U deinstalliert den Dienst wieder
+  Start-Process -FilePath "$PSScriptRoot\InstallUtil.exe" -ArgumentList "-u $PSScriptRoot\$servicename.exe" -Wait
+}
   
-  ## Script
+# Das Skript schreibt einfach die aktuelle Zeit und eine Zufallszahl in eine Text-Datei. Es wird immer wieder
+# zusammen mit dem Dienst ausgeführt.
   
 $logfile = "$env:PUBLIC\log\random.txt"
 
 if ($(Test-Path -Path $logfile))
 {
-    Remove-Item $logfile
+  Remove-Item $logfile
 }
 else
 {
