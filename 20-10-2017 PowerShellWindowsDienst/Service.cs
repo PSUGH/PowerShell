@@ -3,7 +3,7 @@ using System.ServiceModel;
 using System.Configuration.Install;
 using System.ComponentModel;
 
-// Das Grundgerüst des Dienstes:
+// Das Grundgerüst eines Windows-Dienstes:
 
 namespace Dienst
 {
