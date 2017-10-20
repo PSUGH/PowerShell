@@ -6,13 +6,13 @@ param
     [switch]
     $Uninstall
 )
-  
-# Der Service wird in C# erstellt:
-  
-if ($Install)
-{
+
 # Der Name unsers Dienstes ist der Name des Skripts
 $servicename = $($($MyInvocation.MyCommand.Name).Split('.')[0])
+
+if ($Install)
+{
+# Der Service wird in C# erstellt:
 $source = @"
 using System.ServiceProcess;
 using System.Configuration.Install;
