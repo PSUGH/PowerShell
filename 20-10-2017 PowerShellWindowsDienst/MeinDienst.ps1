@@ -7,7 +7,7 @@ param
     $Uninstall
 )
   
-  ## Service
+# Der Service wird in C# erstellt:
   
 if ($Install)
 {
