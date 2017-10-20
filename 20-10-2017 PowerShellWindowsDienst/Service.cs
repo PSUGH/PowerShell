@@ -1,9 +1,9 @@
 using System.ServiceProcess;
-using System.ServiceModel;
 using System.Configuration.Install;
 using System.ComponentModel;
+using System.Diagnostics;
 
-// Das Grundgerüst eines Windows-Dienstes:
+// Das Grundgerüst eines Windows-Dienstes. Das Template ist ohne weitere Funktion:
 
 namespace Dienst
 {
@@ -13,7 +13,8 @@ namespace Dienst
         {
             Service.Run(new Service());
         }
-
+        
+        // Die Zustände des Dienstes:
         protected override void OnStart(string[] args)
         {
             base.OnStart(args);
@@ -44,6 +45,7 @@ namespace Dienst
             service.DisplayName = "MeinWindowsDienst";
             service.Description = "Mein Windows-Dienst";
 
+            // Der Dienst läuft mit den höchsten Rechten
             process.Account = ServiceAccount.LocalSystem;
 
             Installers.Add(process);
