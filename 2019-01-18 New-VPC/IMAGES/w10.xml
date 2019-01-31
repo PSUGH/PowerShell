@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+ 	<settings pass="specialize">
+        <component name="Networking-MPSSVC-Svc" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <PublicProfile_EnableFirewall>false</PublicProfile_EnableFirewall>
+            <PrivateProfile_EnableFirewall>false</PrivateProfile_EnableFirewall>
+            <DomainProfile_EnableFirewall>false</DomainProfile_EnableFirewall>
+        </component>
+        <!--<component name="Microsoft-Windows-UnattendedJoin" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <Identification>
+                <Credentials>
+                    <Domain>[DOMAIN]</Domain>
+                    <Password>[INSTUSRNTPWD]</Password>
+                    <Username>[INSTUSRNT]</Username>
+                </Credentials>
+                <JoinDomain>[DOMAIN]</JoinDomain>
+                <UnsecureJoin>false</UnsecureJoin>
+            </Identification>
+        </component>-->
+        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <RunSynchronous>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>1</Order>
+                    <Path>net user administrator /active:yes</Path>
+                </RunSynchronousCommand>
+				<RunSynchronousCommand wcm:action="add">
+					<Order>2</Order>
+					<Path>reg add "hklm\software\Classes\CLSID\{20D04FE0-3AEA-1069-A2D8-08002B30309D}" /v LocalizedString /t reg_sz /d [PCNAME] /f</Path>
+				</RunSynchronousCommand>
+            </RunSynchronous>
+        </component>
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ComputerName>[PCNAME]</ComputerName>
+            <CopyProfile>false</CopyProfile>
+            <DisableAutoDaylightTimeSet>false</DisableAutoDaylightTimeSet>
+            <DoNotCleanTaskBar>true</DoNotCleanTaskBar>
+            <ProductKey>NPPR9-FWDCX-D2C8J-H872K-2YT43</ProductKey>
+            <RegisteredOrganization>Testfirma</RegisteredOrganization>
+            <RegisteredOwner>Mitarbeiter</RegisteredOwner>
+            <ShowWindowsLive>false</ShowWindowsLive>
+            <TimeZone>W. Europe Standard Time</TimeZone>
+        </component>
+    </settings>
+    <settings pass="oobeSystem">
+        <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <InputLocale>de-de</InputLocale>
+            <SystemLocale>de-de</SystemLocale>
+            <UILanguage>de-de</UILanguage>
+            <UserLocale>de-de</UserLocale>
+        </component>
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <OOBE>
+                <HideEULAPage>true</HideEULAPage>
+                <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+                <NetworkLocation>Work</NetworkLocation>
+                <ProtectYourPC>1</ProtectYourPC>
+            </OOBE>
+            <UserAccounts>
+                <LocalAccounts>
+                    <LocalAccount wcm:action="add">
+                        <Password>
+                            <Value>[ADMINPW]</Value>
+                            <PlainText>true</PlainText>
+                        </Password>
+                        <Description>lokaler Administrator</Description>
+                        <DisplayName>Administrator</DisplayName>
+                        <Name>Administrator</Name>
+                        <Group>Administratoren</Group>
+                    </LocalAccount>
+                </LocalAccounts>
+            </UserAccounts>
+            <VisualEffects>
+                <FontSmoothing>Off</FontSmoothing>
+            </VisualEffects>
+            <AutoLogon>
+                <Password>
+                    <Value>[ADMINPW]</Value>
+                    <PlainText>True</PlainText>
+                </Password>
+                <Domain>[PCNAME]</Domain>
+                <Enabled>true</Enabled>
+                <LogonCount>1</LogonCount>
+                <Username>Administrator</Username>
+            </AutoLogon>
+<!--			<FirstLogonCommands>
+               <SynchronousCommand wcm:action="add">
+                    <Order>1</Order>
+                    <CommandLine>c:\Temp\Postinst.cmd</CommandLine>
+                    <Description>Postinstallation</Description>
+                    <RequiresUserInput>false</RequiresUserInput>
+               </SynchronousCommand>
+            </FirstLogonCommands>
+-->        </component>
+    </settings>
+</unattend>
