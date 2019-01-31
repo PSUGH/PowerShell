@@ -1,1 +1,1 @@
-New-VPC‘ zum erstellen von virtuellen Maschinen
+'New-VPC', ein Skript zum Erstellen von virtuellen Maschinen von Karsten
