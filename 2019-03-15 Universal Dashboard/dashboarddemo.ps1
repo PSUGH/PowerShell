@@ -1,127 +1,100 @@
-# Install-Module universalDashboard
+$dashboard = New-UDDashboard -Content {
+    New-UDCard -Title 'DashboardText' -id DashboardText -Content {
+        New-UDParagraph -Text 'Hier kann man ein bisschen spielen'
+    } 
 
-Start-UDDashboard -port 10000
-Start-Process http://localhost:10000
-
-Get-UDDashboard | Stop-UDDashboard
-
-$Dashboard = New-UDDashboard -Title "ein Dashboard" -Content { 
-    New-UDHeading -Text "Just a Dashboard" -Size 1
-}
-
-Start-UDDashboard -Dashboard $Dashboard
-Get-UDDashboard | Stop-UDDashboard
-
-$Dashboard2 = New-UDDashboard -Title "ein Dashboard" -Content { 
-    # New-UDHeading -Text "ServerDaten" -Size 1
-    New-UDChart -Title "Process Memory" -Endpoint {
-        Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 5 | Out-UDChartData -DataProperty WorkingSet -LabelProperty Name
-    }
-}
-
-Start-UDDashboard -Dashboard $Dashboard2 -Port 10000 # -AutoReload
-Start-Process http://localhost:10000
-Get-UDDashboard | Stop-UDDashboard
-
-$DashboardLayout = New-UDDashboard -Title Layout -Content {
-    New-UDLayout -Columns 4 -Content {
-        New-UDHeading -Text Eins -Size 1
-        New-UDHeading -Text Zwei -Size 1
-        New-UDHeading -Text Drei -Size 1
-        New-UDHeading -Text vier -Size 1
-    }
-}
-Start-UDDashboard -Dashboard $DashboardLayout -Port 10000 # -AutoReload
-Start-Process http://localhost:10000
-Get-UDDashboard | Stop-UDDashboard
-
-$DashboardLayout2 = New-UDDashboard -Title Layout -Content {
-    New-UDRow -Columns {
-        New-UDColumn -Smallsize 6 -Content { # Die Standardbreite einer Seite ist 12
-            New-UDCard -Title "Size 6"
-        }
-        New-UDColumn -Smallsize 6 -Content {
-            New-UDCard -Title "Size 6"
+    New-UDCollapsible -Items {
+        New-UDCollapsibleItem -Title "Raum 1" -Icon arrow_circle_right -Content {
+            New-UDCheckbox -Label "Installieren" -id Checkbox -OnChange {
+                $Element = Get-UDElement -Id CheckBox
+                Set-UDElement -Id "CheckboxState" -Content $Element.Attributes["checked"]
+            }
+                    
         }
     }
-    New-UDRow -Columns {
-        New-UDColumn -SmallSize 9 -SmallOffset 3 -Content {
-            New-UDCard -Title "Size 12"
-        }
-    }
-}
-
-Start-UDDashboard -Dashboard $DashboardLayout2 -Port 10000 # -AutoReload
-Start-Process http://localhost:10000
-Get-UDDashboard | Stop-UDDashboard
-
-$DashboardLayout3 = New-UDDashboard -Title Layout -Content {
-    New-UDRow -Columns {
-        New-UDColumn -Smallsize 12  -MediumSize 6 -LargeSize 3 -Content { # Die Standardbreite einer Seite ist 12
-            New-UDCard -Title "Size 6"
+    New-UDCollapsible -Items {
+        New-UDCollapsibleItem -Title "Raum 2" -Icon arrow_circle_right -Content {
+            New-UDCheckbox -Label "Installieren" -id Checkbox2 -OnChange {
+                $Element = Get-UDElement -Id CheckBox2
+                Set-UDElement -Id "CheckboxState" -Content $Element.Attributes["checked"]
+            }        
         }
     }
 
-}
-
-Start-UDDashboard -Dashboard $DashboardLayout3 -Port 10000 # -AutoReload
-Start-Process http://localhost:10000
-Get-UDDashboard | Stop-UDDashboard
-
-$PublishFolder = 'C:\temp\'
-$root = $PublishFolder
-# Stellt Variablen, Module und Funktionen in einem Endpoint bereit. In diesem Fall wird die 
-# Variable root aber gar nicht verwendet, das Skript funktioniert also auch ohne 
-$EndPointInit = New-UDEndpointInitialization -Variable Root 
-
-$Folder = Publish-UDFolder -Path $PublishFolder -RequestPath "/files" 
-# Publish-UDFolder veröffentlicht den Ordner per REST-API. Der Request-Path gibt den Ordner
-# in der URL an, unter dem die Datei Datei veröffentlicht ist: 
-Invoke-WebRequest -Uri http://localhost:10000/files/AppsToRemove.xml
-
-$DashboardFiles = New-UDDashboard -Title "Downloads" -Content {
-    New-UDRow -Columns {
-        New-UDTable -Title "Downloads" -Headers @("Name","Size","Download") -Endpoint {
-            Get-ChildItem -Path $PublishFolder -File | ForEach-Object {
-                [PSCustomObject]@{
-                    Name = $_.Name 
-                    Size = "{0:0}KB" -f $_.Length
-                    # Der Download-Link entspricht dem veröffentlichten Pfad (s. Publish UDFolder)
-                    Download = New-UDLink -Text Download -URl "/files/$($_.Name)" 
-                }
-            } | Out-UDTableData -Property @("Name","Size","Download")
+    New-UDFab -ButtonColor 'green' -Icon anchor -Size Large -onClick {
+        Show-UDToast -Message "Booooom!" -Duration 10000
+    } -Content {
+        New-UDFabButton -ButtonColor 'green' -Icon android -onClick {
+            New-UDEndpoint -Endpoint {
+                "Ausgabe" | Out-File C:\temp\ausgabe.txt
+            } 
         }
     }
-} -EndpointInitialization $EndPointInit
 
-Start-UDDashboard -Dashboard $DashboardFiles -Port 10000 -PublishedFolder $Folder
-Start-Process http://localhost:10000
-Get-UDDashboard | Stop-UDDashboard
+    New-UDHtml -Markup "<h3>Daten aus dem Eventlog</h3>"
+    New-UDGrid -Title "Top 5 Errors" -Headers @("LogName","Quelle","Nachricht") -Properties @("Logname","Source","Message") -Endpoint {
+        Get-EventLog -LogName Application -Newest 5 -EntryType Error | Select-Object @{N="Logname";e={"Application"}},Source,Message | Out-UDGridData
+    } -FontColor blue -AutoRefresh -RefreshInterval 5 -DefaultSortColumn Quelle
 
-$Root = "C:\temp"
-$init = New-UDEndpointInitialization -Variable ROOT
-
-$DashboardInput = New-UDDashboard -Title "Inputs" -Content {
-    New-UDInput -Title Input -EndPoint {
+    New-UDLayout -Columns 3 -Content {
+        New-UDCounter -Title "Files c:\temp" -AutoRefresh -RefreshInterval 1 -Endpoint {
+            (@(Get-ChildItem C:\temp\ -File)).Length
+        } 
+        New-UDCounter -Title "Folders c:\temp" -AutoRefresh -RefreshInterval 1 -Endpoint {
+            (Get-ChildItem C:\temp\ -Directory).Length
+        } 
+        New-UDCounter -Title "Folders c:\Windows" -AutoRefresh -RefreshInterval 1 -Endpoint {
+            (Get-ChildItem C:\Windows\ -File).Length
+        } 
+    }
+    
+    New-UDInput -Title Benutzername -SubmitText "�bernehmen" -Endpoint {
         param(
-            [string]$InputField,
-            [bool]$checkMich,
-            [System.DayOfWeek]$DayInput,
-            [Parameter(Helpmessage="Was soll ich tun")]
-            [ValidateSet("Essen","Trinken","Schlafen")]$tuWas
+            [ValidateLength(3,10)]
+            [UniversalDashboard.ValidationErrorMessage("Der Name war zu lang oder zu kurz")]
+            [Alias('Geben Sie Ihren Namen ein')]
+            [string]$name
         )
+        $name | Out-File -FilePath C:\temp\Namen.txt -Append
+        New-UDInputAction -Toast "Gespeichert" -Duration 1000 -ClearInput
+    } -Validate
 
-        # $InputField | Out-File ( Join-Path $root "output.txt" )
-        
-        # New-UDInputAction -Toast $tuWas
-        # New-UDInputAction -RedirectUrl "https://www.netz-weise.de"
+    New-UDInput -Title Adresse -SubmitText "Speichern" -Endpoint {
+        param(
+            [ValidateLength(3,50)]
+            [UniversalDashboard.ValidationErrorMessage("ungueltige Adresse eingegeben")]
+            [string]$Adresse
+        )
+        $Adresse | Out-File -FilePath C:\temp\Namen.txt -Append
         New-UDInputAction -Content @(
-            New-UDCard -Title $InputField
+            New-UDCard -Text ($adresse)
         )
+    } -Validate
+<#
+     New-UDInput -Title "Simple Form" -Id "Form" -Content {
+        New-UDInputField -Type 'textbox' -Name 'Email' -Placeholder 'Email Address'
+        New-UDInputField -Type 'checkbox' -Name 'Newsletter' -Placeholder 'Sign up for newsletter'
+        New-UDInputField -Type 'select' -Name 'FavoriteLanguage' -Placeholder 'Favorite Programming Language' -Values @("PowerShell", "Python", "C#")
+        New-UDInputField -Type 'radioButtons' -Name 'FavoriteEditor' -Placeholder @("Visual Studio", "Visual Studio Code", "Notepad") -Values @("VS", "VSC", "NP")
+        New-UDInputField -Type 'password' -Name 'password' -Placeholder 'Password'
+        New-UDInputField -Type 'textarea' -Name 'notes' -Placeholder 'Additional Notes'
+    } -Endpoint {
+        param($Email, $Newsletter, $FavoriteLanguage, $FavoriteEditor, $password, $notes)
+    } 
+#>
+    New-UDInput -Title Formular -id Form -Content {
+        New-UDInputField -Type "textbox" -name "Email" -Placeholder "EmailAdresse"
+        New-UDInputField -Type "checkbox" -Name "Newsletter" -Placeholder "Newsletter bestellen"
+        New-UDInputField -Type select -Name "Programmiersprache" -Placeholder "Programmiersprache" -Values @("Powershell","C#","Python")
+        New-UDInputField -Type radioButtons -Name "Editor" -Placeholder @("VSCode","Ise","IseSteroids") -Value  @("VSC","ISE","ISES")
+        New-UDInputField -Type 'password' -Name 'password' -Placeholder 'Password'
+        New-UDInputField -Type 'textarea' -Name 'notes' -Placeholder 'Bemerkungen'
+    } -Endpoint {
+      param($Email, $Newsletter, $Programmiersprache, $Editor, $password, $notes)
+      $email,$newsletter,$progammiersprache,$Editor,$password,$notes | Out-File c:\temp\Userdata.txt -Append
     }
- 
-} -EndpointInitialization $EndPointInit
+}
 
-Start-UDDashboard -Dashboard $DashboardInput -Port 10000
-Start-Process http://localhost:10000
-Get-UDDashboard | Stop-UDDashboard
+Start-UDDashboard -AutoReload -Port 10000 -Dashboard $dashboard -Name Demo
+# Start-Process http://localhost:10000
+# Stop-UDDashboard -Name Demo
