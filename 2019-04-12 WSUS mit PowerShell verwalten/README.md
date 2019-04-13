@@ -40,7 +40,7 @@ Updates verfahren werden die nur die Sicherheitsupdates enthalten (Kennzeichnung
 Mit dem Skript "Remove-PKUnwantedUpdates.ps1" kann das Entfernen nicht erwünschter Updates angestoßen werden. Dazu ist das 
 Powershell-Modul "PoshWSUS" erforderlich.
 
-### 5. „Assistent für die Serverbereinigung“ regelmäßig automatisch ausführen
+### 5. "Assistent für die Serverbereinigung" regelmäßig automatisch ausführen
 
-Der „Assistent für die Serverbereinigung“ soll regelmäßig automatisch durchgeführt werden. Mit dem Skript 
+Der "Assistent für die Serverbereinigung" soll regelmäßig automatisch durchgeführt werden. Mit dem Skript 
 "Start-PKWSUSServerCleanup.ps1" kann die Bereinigung des WSUS-Servers angestoßen werden. Dazu ist das Powershell-Modul "PoshWSUS" erforderlich.
