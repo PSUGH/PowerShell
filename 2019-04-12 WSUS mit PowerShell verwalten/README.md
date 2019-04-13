@@ -6,6 +6,7 @@
 
 Der "Assistent für die Serverbereinigung" entfernt keine Updates die durch eine neuere Version ersetzt wurden. Dafür wird das 
 Skript "Decline-SupersededUpdates.ps1" benötigt.
+
 Quelle: https://social.technet.microsoft.com/Forums/msonline/en-US/15f0443d-2f68-4d9e-a580-0e330fbac6cc/no-updates-after-3159706?forum=winserverwsus
 
 Mit dem Skript "Add-PKTaskDeclineSuperseededUpdates.ps1" kann auf dem WSUS-Server eine Aufgabe erstellt werden, die dieses Skript 
@@ -27,6 +28,7 @@ Skript eventuell angepasst werden.
 Der über die WSUS-Konsole konfigurierbare Zeitplan für die Synchronisierung ist unflexibel. Man kann aber auch die Synchronisierung
 auf "Manuell synchronisieren" stellen und die Synchronisierung über ein eingeplantes PowerShell-Skript durchführen. Dazu kann das 
 Powershell-Modul "PoshWSUS" verwendet werden das über die Powershell Gallery bezogen werden kann.
+
 Quelle: https://www.powershellgallery.com/packages/PoshWSUS/2.3.1.6
 
 Mit dem Skript "Start-PKWSUSServerSync.ps1" kann die Synchronisierung des WSUS-Servers angestoßen werden.
