@@ -16,7 +16,11 @@ regelmäßig ausführt.
 
 Die WSUS-Datenbank muss regelmäßig gewartet werden, um eine ausreichende Performance zu erreichen. Ich habe es schon oft erlebt, 
 dass die Performance der Datenbank aufgrund nicht stattfindender Wartung so schlecht ist, dass die WSUS-Konsole nicht mehr 
-funktioniert. Dazu wird das SQL-Skript "WsusDBMaintenance.sql" verwendet.
+funktioniert. 
+
+![Fehler: Datenbankfehler](https://github.com/PSUGH/PowerShell/raw/master/2019-04-12%20WSUS%20mit%20PowerShell%20verwalten/DBFehler.png)
+
+Dazu wird das SQL-Skript "WsusDBMaintenance.sql" verwendet.
 
 Quelle: https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/dd939795(v%3dws.10)
 
