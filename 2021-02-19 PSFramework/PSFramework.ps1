@@ -1,6 +1,6 @@
 <#
 Name: Fred
-Twitter: FredWeinmann
+Twitter: @FredWeinmann
 Project:
 
 - https://psframework.org
