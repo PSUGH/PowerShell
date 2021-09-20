@@ -79,7 +79,7 @@ curl.exe ifconfig.me
 
 Invoke-WebRequest ipconfig.me
 
-# Vorteil von Invoke-WebRequest ist natÃ¼rlich, dass die Antwort PowerShell-like in Objekten vorliegt
+# Vorteil von Invoke-WebRequest ist natürlich, dass die Antwort PowerShell-like in Objekten vorliegt
 
 Invoke-WebRequest -Uri https://git.io/JRRmL | Select-Object -Expand headers
 
