@@ -114,11 +114,11 @@ curl -o "PowerShell Cheat Sheet.pdf" -C - https://www.netz-weise-it.training/ima
 
 Invoke-RestMethod -Resume https://www.netz-weise-it.training/images/dokus/Powershell%20Cheat%20Sheet%201.0.pdf -OutFile "PowerShell Cheat Sheet.pdf"
 
-# Invoke-RestMethod ist das 2. Cmdlet, das hÃ¤ufig mit cURL verwechselt wird. Damit werden Anfragen mit 
+# Invoke-RestMethod ist das 2. Cmdlet, das häufig mit cURL verwechselt wird. Damit werden Anfragen mit 
 # HTTP und HTTPS zu einem REST Webservice geschickt, der dann mit strukturierten Daten antwortet, die 
 # PowerShell dann in JSON etc. formatiert 
 
-# Mit Invoke-RestMethod kann man Formulare ausfÃ¼llen: https://freeshell.de/~dtntlr/eingabe.html
+# Mit Invoke-RestMethod kann man Formulare ausfüllen: https://freeshell.de/~dtntlr/eingabe.html
 
 Invoke-RestMethod https://freeshell.de/~dtntlr/eingabe.php -Method Post -Body @{vor="Poison";nach="Ivy"}
 
