@@ -22,7 +22,7 @@ $cURL = @{
     Lizenz              = 'MIT-Lizenz'
 } > $cURL
 
-# Wie aktuell ist die Version fÃ¼r Windows?
+# Wie aktuell ist die Version für Windows?
 curl.exe --version 
 
 # cURL wird seit April 2018 mit Windows 10 Update 1803 ausgeliefert
@@ -50,17 +50,17 @@ Show-Image -File $path\snover.png
 
 # Wer curl in der Kommandozeile nutzen will, will kein Iwr
 
-# Oder wie Jeffrey Snover spÃ¤ter resÃ¼miert:
+# Oder wie Jeffrey Snover später resümiert:
 
 Show-Image -File $path\snover2.png
 
 # Der curl-Alias in der Windows PowerShell
 
-powershell.exe -Command 'psv; Get-Alias curl'
+powershell.exe -Command 'Get-Alias curl'
 
 # In PowerShell 7 gibt es den Alias dann nicht mehr:
 
-psv; Get-Alias curl
+Get-Alias curl
 
 # Im Rahmen der Cross-Plattformstrategie verteilt Microsoft nun also *nix-Tools wie cURL, tar, ssh etc. mit Windows
 
@@ -87,7 +87,7 @@ Invoke-WebRequest -Uri https://git.io/JRRmL | Select-Object -Expand headers
 
 (Invoke-WebRequest psugh.de).links.href
 
-# Nachteil: Es werden andere Werte zurÃ¼ckgeben als bei cURL
+# Nachteil: Es werden andere Werte zurückgeben als bei cURL
 
 curl.exe --head https://git.io/JRRmL
 
