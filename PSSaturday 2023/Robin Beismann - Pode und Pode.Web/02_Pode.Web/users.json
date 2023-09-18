@@ -1,0 +1,14 @@
+[
+    {
+        "Name": "John Doe",
+        "Username": "johndoe",
+        "Email": "john.doe@contoso.com",
+        "Password": "n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=",
+        "Groups": [
+            "Admin"
+        ],
+        "Metadata": {
+            "Created": "2001-01-01"
+        }
+    }
+]
