@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
+    <title>Eine Paketverwaltung für Windows</title>
+
+    <style>
+    body { margin: 0; }
+    #title, #subtitle, #info, #summary { text-align: center; }
+    #shownotes-headline {
+      cursor: pointer;
+      font-size: x-large;
+      font-weight: bold;
+    }
+    #summary { margin: 0 10%; }
+    .chapter { 
+      margin-top: 1em; 
+      scroll-margin-top: 50px;
+    }
+    #shownotes { 
+      margin-top: 2em;
+      padding: 1.5em;
+      background: #fafafa;
+    }
+
+    #edit-bar {
+        margin-top: 2em; display: flex; justify-content: space-between; flex-wrap: wrap;
+        position: -webkit-sticky; position: sticky; top: 0; left: 0;
+        background: white; z-index: 999;
+        font-family: BlinkMacSystemFont,-apple-system,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+        -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; text-size-adjust: 100%;
+    }
+    #edit-bar-spacer { flex-grow: 1; }
+    .button {
+        background-color: #f5f5f5; color: #363636;
+        border: 1px solid #dbdbdb; border-radius: 4px; box-shadow: none;
+        margin: 0.5em 1.5em; padding: 5px 12px;
+        cursor:pointer;font-size: 0.9em;
+        justify-content:center; text-align:center; white-space:nowrap;
+        display: inline-flex; position: relative; vertical-align: top;
+        user-select: none; text-decoration: none;
+    }
+    .button:hover{border-color:#b5b5b5;color:#363636;background-color:#eee;}
+    .button:active{border-color:#4a4a4a;color:#363636;background-color:#e8e8e8;}
+    .button.export-option { margin: 0.5em 0.2em 0.5em auto; }
+    .button.export-buttons-shown { margin-left: 0.2em; margin-left: auto; }
+
+    span.active { font-weight: bold; }
+    span.listened { font-weight: bold; font-style: italic; }
+    #transcript.edit-mode { border-style: dashed; padding: 10px; }
+    #transcript span { cursor: pointer; }
+    #transcript.edit-mode span { cursor: text; }
+    .transcript-base { margin: 1.5em; max-width: 1200px;}
+    .chapter-shownotes{
+        cursor:pointer;
+        color: black;
+        text-decoration: none;
+    }
+
+    @media all and (max-width: 900px) {
+      .button.export-buttons-shown { margin: 0.5em; margin-left: auto; }
+      .button.export-option { margin: 0.5em; margin-left: auto; }
+    }
+
+    @media all and (max-width: 340px) {
+      .button { margin: 0.2em; }
+    }
+
+    @media print {
+        #edit-bar { display: none; }
+        .button { display: none; }
+        span { background: white; }
+        #transcript { border-style: none !important; padding: 0px !important; }
+    }
+    </style>
+</head>
+
+<body>
+
+
+<div id="metadata">
+<h1 id="title">Eine Paketverwaltung für Windows</h1>
+<h4 id="subtitle">Eine Paketverwaltung für Windows (Eine Geschichte voller Missverständnisse)
+
+Andreas Nick und Thorsten Butz werfen einen Insider-Blick auf Microsofts Ringen um eine Paketverwaltung und deren langen Weg vom Nano-Server in zu nativen PowerShell-Cmdlets.</h4>
+
+<p id="info">
+2023, Andreas Nick &amp; Thorsten Butz<br>
+PSSat Hannover 2023<br>
+<a href="http://www.pssat.de" target="_blank">http://www.pssat.de</a>
+</p>
+
+
+</div>
+
+<div id="shownotes">
+<details open>
+<summary id="shownotes-headline">Generated Shownotes</summary>
+<h3>Chapters</h3>
+<a href="#chapter0" class="chapter-shownotes">0:00:04 Vorstellung und Einleitung des Themas</a><br>
+<a href="#chapter1" class="chapter-shownotes">0:02:42 Rückblick auf vergangene PowerShell Saturday Veranstaltungen</a><br>
+<a href="#chapter2" class="chapter-shownotes">0:04:06 Installation von Software auf Raspberry Pi und Windows</a><br>
+<a href="#chapter3" class="chapter-shownotes">0:08:07 Vergleich von Package-Management-Systemen in Linux und Windows</a><br>
+<a href="#chapter4" class="chapter-shownotes">0:12:13 Einführung in Scoop als Paketmanager für Windows</a><br>
+<a href="#chapter5" class="chapter-shownotes">0:15:00 YouTube-Downloader gesperrt, aber alternative Programme verfügbar</a><br>
+<a href="#chapter6" class="chapter-shownotes">0:18:01 Scoop ist Teil der wachsenden Popularität von Paketmanagern</a><br>
+<a href="#chapter7" class="chapter-shownotes">0:21:45 Der Fokus auf Benutzerzentrierung und der Store</a><br>
+<a href="#chapter8" class="chapter-shownotes">0:25:21 Verpacken von Anwendungen mit digitaler Signatur</a><br>
+<a href="#chapter9" class="chapter-shownotes">0:31:36 Einfache Nutzung ohne Lizenzkosten für Softwareeinsatz</a><br>
+<a href="#chapter10" class="chapter-shownotes">0:35:27 Winget - Eine Lösung ohne arbiträren Code</a><br>
+<a href="#chapter11" class="chapter-shownotes">0:43:17 Herausforderungen bei Breaking Changes in der Entwicklung</a><br>
+<a href="#chapter12" class="chapter-shownotes">0:44:40 Fragen zu Code-Beispielen und PowerShell</a><br>
+<a href="#chapter13" class="chapter-shownotes">0:46:30 Vorsicht bei der Verwendung von Winget in der ISE</a><br>
+<a href="#chapter14" class="chapter-shownotes">0:48:13 Programminstallationen ohne administrativen Zugriff möglich</a><br>
+<a href="#chapter15" class="chapter-shownotes">0:51:57 Neue Version der PowerShell (7.2.2)</a><br>
+<a href="#chapter16" class="chapter-shownotes">0:53:29 Anwendungen blockieren und PowerShell 7 Probleme</a><br>
+<a href="#chapter17" class="chapter-shownotes">1:00:39 Abschließende Worte über den userzentrierten Ansatz</a><br>
+<h3>Long Summary</h3>
+In dieser Folge des PowerShare Saturday dreht sich alles um das Thema Paketverwaltung und App-Installer-CLI. Wir geben einen Überblick über die aktuellen Entwicklungen in diesem Bereich und weisen auf die verschiedenen Herausforderungen und Missverständnisse hin, die es in Bezug auf die Paketverwaltung gibt. Wir freuen uns, prominente Gäste in dieser Folge zu begrüßen. Thorsten und Andreas erinnern sich an ihre ersten Begegnungen auf PowerShell-Veranstaltungen und freuen sich, dass sie wieder persönlich zusammenkommen können. Wir diskutieren über die Unterschiede zwischen der Paketverwaltung unter Windows und Linux/Unix. Wir erklären, dass die Linux-Welt mit Aptitude, DPKG ein Vorbild für einen Package Manager hat, während die Windows-Welt immer noch keine ideale Lösung hat. Wir stellen verschiedene Tools vor, die in der Windows-Welt verwendet werden, wie SMS, MSI Exec usw., betonen jedoch die Notwendigkeit eines effizienten und benutzerfreundlichen Package Managers. Wir diskutieren auch die verschiedenen Ansätze für die App-Installation und virtualisierte Bereitstellung von Anwendungen unter Windows, wie Chocolaty, Scoop, MSIX und App-V. Wir erklären, wie diese Tools funktionieren und welche Vorteile sie bieten. Thorsten zeigt eine Demo zur Bereitstellung von Anwendungen mit MSIX und erklärt die verschiedenen Schritte und Optionen. Er erwähnt auch, dass MSIX in der Home Edition von Windows lauffähig ist und somit auch Schulen und Universitäten ermöglicht, Anwendungen ohne zusätzliche Lizenzkosten zu verteilen. Wir diskutieren auch die Unterschiede zwischen gerätezentrierter und benutzerzentrierter Bereitstellung von Anwendungen. Thorsten erwähnt, dass in seiner Firma Winget als Tool zur Paketverwaltung eingesetzt wird, das eine deklarative Herangehensweise verwendet und Pakete mit YAML-Dateien beschreibt. Er lobt die Arbeit des Hauptverantwortlichen für Winget, Demetrius Neeland, und erklärt die Vorteile von Winget gegenüber anderen Paketverwaltungstools wie Chocolaty. Schließlich stellen wir unser eigenes PowerShell-Modul zur Paketverwaltung vor, das in der Alpha-Phase ist und noch viele Verbesserungen benötigt. Wir zeigen eine Demo zur Verwendung von Winget in der ISE und erklären die Funktionalitäten und Überlegungen bei der Verwendung von Winget. Wir installieren verschiedene Anwendungen und betonen die Vorteile von Winget, insbesondere in Bezug auf die einfache und effiziente Paketverwaltung.
+
+<h3>Brief Summary</h3>
+In dieser Folge dreht sich alles um Paketverwaltung und App-Installer-CLI. Wir diskutieren die Unterschiede zwischen Windows und Linux/Unix, stellen verschiedene Tools wie Chocolaty, Scoop, MSIX und App-V vor und präsentieren unser eigenes PowerShell-Modul zur Paketverwaltung namens Winget. Wir betonen die Vorteile von Winget für die einfache und effiziente Paketverwaltung.
+
+<h3>Tags</h3>
+Paketverwaltung, App-Installer-CLI, Windows, Linux/Unix, Chocolaty, Scoop, MSIX, App-V, PowerShell-Modul, Winget
+</div>
+</details>
+
+<div id="edit-bar">
+    <a class="button" id="edit-transcript" onclick="enableEdit();" title="Enable/disable edit mode.">Edit Transcript</a>
+    <a class="button" id="toggle-rename-speaker" onclick="toggleRenameSpeaker();" title="Toggels between renaming speakers and editing speaker." style="display: none;"></a>
+    <a class="button" id="toggle-styling" onclick="removeStyling();" title="Words with low recognition confidence will be highlighted in red.">Remove Highlighting</a>
+    <a class="button" id="add-audio-file" onclick="addAudioFile();" title="Add audio file which should be played along the transcript.">Add Audio File</a>
+    <a class="button" id="toggle-play-on-click" title="Enable/disable click on word for audio playback." style="display: none;">Stop Play-on-click</a>
+
+    <div id="edit-bar-spacer"></div>
+
+    <a class="button export-option" id="save-changes" onclick="saveChanges();" style="display: none;" title="Save transcript editor with current changes for further editing or sharing.">Save Editor</a>
+    <a class="button export-option" id="export-html" onclick="exportHTML();" style="display: none;" title="Export transcript as HTML for Word, Wordpress, etc.">Export HTML</a>
+    <a class="button export-option" id="export-pdf" onclick="window.print(); hideExportButtons();" style="display: none;" title="Export transcript as PDF or to printer.">Export PDF</a>
+    <a class="button export-option" id="export-webvtt" onclick="exportWebVTT();" style="display: none;" title="Export transcript as WebVTT for web players.">Export WebVTT</a>
+    <a class="button" id="show-export-buttons" onclick="showExportButtons();">Export...</a>
+    <a class="button" id="show-help" href="https://auphonic.com/help/algorithms/speech_recognition.html#auphonic-transcript-editor" target="_blank" title="Show transcript editor help.">?</a>
+
+    <audio id="audio-player" preload="auto" style="display: none;">
+        <source src="">
+    </audio>
+</div>
+
+<div id="transcript" class="transcript-base">
+<h1>Transcript</h1>
+
+<h2 id="chapter0" class="chapter">Vorstellung und Einleitung des Themas</h2>
+<br>
+
+<small style="opacity: 0.5;">[0:04]</small> <span data-start="00:00:04.222" data-end="00:00:12.017"><span title="0:04">Ja, herzlich Willkommen, PowerShare Saturday.</span> <span title="0:07">Mein Künstlername, habe ich ja vorhin schon gesagt, aber in Wirklichkeit heiße ich Thorsten</span> </span><span data-start="00:00:12.017" data-end="00:00:14.403"><span title="0:12">Butz und das ist Andreas Nick.</span> </span><br>
+<span data-start="00:00:15.699" data-end="00:00:19.017"><span title="0:16">Ich habe schon ein paar Mal über ein ähnliches Thema gesprochen.</span> </span><br>
+<span data-start="00:00:19.102" data-end="00:00:22.017"><span title="0:19">Ich fürchte, dass es bei dir auch war, über Paketverwaltung.</span> </span><br>
+<span data-start="00:00:22.017" data-end="00:00:23.693"><span title="0:22">Das ist ja erst mal ein Satz mit X.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[0:25]</small> <span data-start="00:00:25.017" data-end="00:00:40.017"><span title="0:25">Welche Paketverwaltung?</span> <span title="0:28">Und ihr wisst schon, Dinget, App-Installer-CLI, das soll ein Schwerpunkt heute sein, aber wir wollen so ein bisschen den großen Bogen an der Stelle nachvollziehbar machen.</span> </span><br>
+<span data-start="00:00:40.017" data-end="00:00:43.017"><span title="0:40">Wir wollen mal schauen, was hat sich in den letzten Jahren getan, wo geht die ganze Reise hin.</span> </span><br>
+<span data-start="00:00:43.017" data-end="00:00:45.956"><span title="0:43">Das soll natürlich kurzweilig sein, weil wir wissen, es ist Samstag, es ist Wochenende.</span> </span><br>
+<span data-start="00:00:47.017" data-end="00:00:51.790"><span title="0:47">Und natürlich wollt ihr auch ein bisschen was sehen. Wir versuchen, das alles hinzubekommen.</span> </span><br>
+<span data-start="00:00:52.546" data-end="00:00:58.937"><span title="0:53" style="background: rgba(209, 72, 54, 0.13);">Ich bin mehr so die Infrastruktur-Abteilung, habe mal als Netzwerker angefangen, Skripte</span> <span title="0:58" style="background: rgba(209, 72, 54, 0.13);">viel, Schule viel.</span> </span><br>
+<span data-start="00:00:59.856" data-end="00:01:04.417"><span title="1:00" style="background: rgba(209, 72, 54, 0.13);">Und Andreas, du bist der große, ja, sag mal, was ist der Oberbürgermeister?</span> </span><br>
+<span data-start="00:01:04.417" data-end="00:01:06.526"><span title="1:04" style="background: rgba(209, 72, 54, 0.13);">Citrix, Anwendungsvirtualisierung, weiß ich nicht.</span> </span><br>
+<span data-start="00:01:07.102" data-end="00:01:10.442"><span title="1:07" style="background: rgba(209, 72, 54, 0.13);">Auch Infrastruktur im Grunde, nur eher von der software-technischen Seite.</span> </span><br>
+<span data-start="00:01:11.459" data-end="00:01:15.017"><span title="1:11" style="background: rgba(209, 72, 54, 0.13);">Interessanterweise all genau die Sachen, von denen ich mich immer wieder schwer tue, die</span> </span><span data-start="00:01:15.258" data-end="00:01:18.017"><span title="1:15" style="background: rgba(209, 72, 54, 0.13);">ganzen Abkürzungen auseinanderzuhalten.</span> <span title="1:17" style="background: rgba(209, 72, 54, 0.13);">Wir wollen mal schauen.</span> </span><br>
+<span data-start="00:01:18.017" data-end="00:01:18.994"><span title="1:18" style="background: rgba(209, 72, 54, 0.13);">PowerShell, machen wir beide.</span> </span><br>
+<span data-start="00:01:20.111" data-end="00:01:24.252"><span title="1:20" style="background: rgba(209, 72, 54, 0.13);">Das ist das verbindende Element.</span> <span title="1:22" style="background: rgba(209, 72, 54, 0.13);">PowerShell ist ein gutes Stichwort.</span> </span><br>
+<span data-start="00:01:24.337" data-end="00:01:30.017"><span title="1:24" style="background: rgba(209, 72, 54, 0.13);">Ich finde, wir sollten die Leute hier würdigen, die das alles machen.</span> </span><br>
+<span data-start="00:01:30.017" data-end="00:01:34.097"><span title="1:30" style="background: rgba(209, 72, 54, 0.13);">Ich habe gar keine Ahnung, weißt du noch, wann du das erste Mal PowerShell User Group</span> </span><span data-start="00:01:34.097" data-end="00:01:38.205"><span title="1:34" style="background: rgba(209, 72, 54, 0.13);">Hannover wahrgenommen hast, wann du das erste Mal hier dabei warst?</span> <span title="1:37" style="background: rgba(209, 72, 54, 0.13);">2017.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[1:40]</small> <span data-start="00:01:39.781" data-end="00:01:45.821"><span title="1:40" style="background: rgba(209, 72, 54, 0.13);">Was war der Anlass, weißt du das noch?</span> <span title="1:41" style="background: rgba(209, 72, 54, 0.13);">Ich habe 2016 Server 2016 Kurs bei Holger gemacht.</span> </span><br>
+<span data-start="00:01:46.177" data-end="00:01:52.015"><span title="1:46" style="background: rgba(209, 72, 54, 0.12);">Da hatten wir mal Lust, einen Kurs zu machen und wollten hier schon immer mal einen Kurs machen und die Leute mal kennenlernen.</span> </span><br>
+<span data-start="00:01:52.996" data-end="00:02:00.177"><span title="1:53" style="background: rgba(209, 72, 54, 0.12);">Netzweise war noch relativ neu in Hannover. Vorher war das hier in der Verizon hauptsächlich und wollten die Leute mal kennenlernen.</span> </span><br>
+<span data-start="00:02:00.177" data-end="00:02:03.529"><span title="2:00" style="background: rgba(209, 72, 54, 0.12);">Dachten wir, uns buchen wir hier mal einen Kurs für Server 2016.</span> </span><br>
+<span data-start="00:02:04.672" data-end="00:02:09.578"><span title="2:05" style="background: rgba(209, 72, 54, 0.12);">Und der ist gerade halt frisch rausgekommen, kann sogar 2015 gewesen sein, Ende 2015.</span> </span><br>
+<span data-start="00:02:10.496" data-end="00:02:13.467"><span title="2:10" style="background: rgba(209, 72, 54, 0.32);">Und das Ja darauf halt, erst einmal PowerShare User Group, ja.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[2:15]</small> <span data-start="00:02:15.376" data-end="00:02:18.607"><span title="2:15">Ich habe es ehrlich gesagt vergessen. Ich habe wirklich überlegt, was war so der Anfang.</span> </span><br>
+<span data-start="00:02:19.625" data-end="00:02:24.873"><span title="2:20">Woran ich mich gut erinnern kann, ist, dass für mich Hannover die Welthauptstadt der PowerShell zu sein schien.</span> </span><br>
+<span data-start="00:02:25.953" data-end="00:02:32.226"><span title="2:26">Weil zwei Drittel aller Kollegen aus dem deutschsprachigen Raum, die in dem Kontext mir bekannt waren,</span> </span><span data-start="00:02:32.226" data-end="00:02:35.622"><span title="2:32">und da kommen natürlich immer neue hinzu, die wohnen hier, so wie Andreas,</span> </span><span data-start="00:02:36.378" data-end="00:02:41.226"><span title="2:36">und dann hat es mich dahin gezogen. Ich war dann zweimal hier beim PowerShell Saturday.</span> </span><br>
+
+
+<h2 id="chapter1" class="chapter">Rückblick auf vergangene PowerShell Saturday Veranstaltungen</h2>
+<br>
+
+<small style="opacity: 0.5;">[2:42]</small> <span data-start="00:02:41.698" data-end="00:02:45.074"><span title="2:42">Vielleicht war der eine oder andere damals dabei. Ich meine 2017 und 2018.</span> </span><br>
+<span data-start="00:02:45.542" data-end="00:02:49.226"><span title="2:46">Naja, und den Rest ist dann so ein bisschen Geschichte. Ihr wisst schon, Corona und den ganzen Spaß.</span> </span><br>
+<span data-start="00:02:49.226" data-end="00:02:53.226"><span title="2:49">Und deswegen freue ich mich sehr, dass wir das jetzt hier wieder in Präsenz geschafft haben.</span> </span><br>
+<span data-start="00:02:53.226" data-end="00:02:58.226"><span title="2:53">Es hat immer die Diskussion, macht das eigentlich alles noch Sinn? Wir machen ja sowieso dauernd Teams.</span> </span><br>
+<span data-start="00:02:58.226" data-end="00:03:03.226"><span title="2:58">Aber ich finde so in Präsenz, Live-Musik, Bierchen am Abend, das ist eine andere Ebene.</span> </span><br>
+<span data-start="00:03:03.226" data-end="00:03:05.509"><span title="3:03">Deswegen freue ich mich, dass ihr das offenkundig auch so seht.</span> </span><br>
+<span data-start="00:03:06.689" data-end="00:03:10.986"><span title="3:07" style="background: rgba(209, 72, 54, 0.12);">Ja, lasst uns mal darüber diskutieren, die ganzen Missverständnisse.</span> </span><br>
+<span data-start="00:03:10.986" data-end="00:03:13.986"><span title="3:11" style="background: rgba(209, 72, 54, 0.12);">Wir haben ein paar Prominente mitgebracht, den einen oder anderen werdet ihr vielleicht erkennen.</span> </span><br>
+<span data-start="00:03:14.313" data-end="00:03:18.436"><span title="3:14" style="background: rgba(209, 72, 54, 0.12);">Ihr werdet sie jetzt in den nächsten 20 Minuten kennenlernen.</span> </span><br>
+<span data-start="00:03:18.968" data-end="00:03:24.186"><span title="3:19" style="background: rgba(209, 72, 54, 0.12);">Das sind so ein bisschen unsere Hauptdarsteller.</span> <span title="3:21" style="background: rgba(209, 72, 54, 0.12);">Aber natürlich gibt es jede Menge Nebenrollen in diesem Film.</span> </span><br>
+<span data-start="00:03:24.186" data-end="00:03:29.626"><span title="3:24" style="background: rgba(209, 72, 54, 0.12);">Die wollen wir natürlich auch nicht unbeackert lassen.</span> </span><br>
+<span data-start="00:03:29.866" data-end="00:03:32.075"><span title="3:30" style="background: rgba(209, 72, 54, 0.12);">Ab jetzt alle Videos in doppelter Geschwindigkeit.</span> </span><br>
+<span data-start="00:03:32.849" data-end="00:03:33.263"><span title="3:33" style="background: rgba(209, 72, 54, 0.12);">Kommt gleich.</span> </span><br>
+<span data-start="00:03:34.046" data-end="00:03:38.872"><span title="3:34">Ja, wenn wir mal angucken, Package Manager, so als Begriff, was ist das?</span> </span><br>
+<span data-start="00:03:39.457" data-end="00:03:42.968"><span title="3:39">Und ich glaube, wenn man verstehen will, was das ist, muss man vor allem erst mal eines machen.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[3:45]</small> <span data-start="00:03:44.588" data-end="00:03:48.566"><span title="3:45">Man muss mal die Seite umschlagen und ein anderes Betriebssystem öffnen, oder?</span> </span><br>
+<span data-start="00:03:48.566" data-end="00:03:55.337"><span title="3:49">Und ich habe mal was mitgebracht, so als erste kleine Demo.</span> <span title="3:51">Das ist ja heute alles relativ einfach geworden.</span> </span><br>
+<span data-start="00:03:57.173" data-end="00:04:03.166"><span title="3:57">Ihr ahnt schon, dass das jetzt nicht so richtig Linux ist, aber wenn man mal hier guckt.</span> </span><br>
+
+
+<h2 id="chapter2" class="chapter">Installation von Software auf Raspberry Pi und Windows</h2>
+<br>
+
+<small style="opacity: 0.5;">[4:06]</small> <span data-start="00:04:05.977" data-end="00:04:09.827"><span title="4:06">Wie installiert man Software?</span> <span title="4:09">Dann könnte das ungefähr so aussehen.</span> </span><br>
+<span data-start="00:04:09.827" data-end="00:04:14.170"><span title="4:10">Wahrscheinlich sieht das so oder so ähnlich auf eurem Raspberry Pi aus.</span> </span><br>
+<span data-start="00:04:15.106" data-end="00:04:17.827"><span title="4:15">Und was wir da sehen, die Profis werden es sofort erkannt haben.</span> </span><br>
+<span data-start="00:04:17.827" data-end="00:04:23.827"><span title="4:18">Aptitude ist ein Frontend, wenn man so will, was ein paar Sachen mehr kann.</span> </span><br>
+<span data-start="00:04:23.827" data-end="00:04:26.827"><span title="4:24">Aber die Technologie dahinter, auf die das alles aufbaut, ist DPKG.</span> </span><br>
+<span data-start="00:04:26.827" data-end="00:04:28.825"><span title="4:27">Und das ist der Debian Package Manager.</span> </span><br>
+<span data-start="00:04:29.662" data-end="00:04:34.827"><span title="4:30">Und das Interessante ist, dass wir heute halt nicht mal einen Raspberry Pi brauchen,</span> </span><span data-start="00:04:34.827" data-end="00:04:38.267"><span title="4:35">wobei das natürlich schon sehr wenig Widerstand ist.</span> </span><br>
+<span data-start="00:04:38.377" data-end="00:04:40.789"><span title="4:38">Das sollte jeder haben, hat wahrscheinlich auch jeder im Raum 20 Stück.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[4:42]</small> <span data-start="00:04:41.842" data-end="00:04:45.387"><span title="4:42">Und wir haben das aber mittlerweile natürlich auch mit dem WSL unter Windows.</span> </span><br>
+<span data-start="00:04:45.993" data-end="00:04:49.067"><span title="4:46">Und wenn man jetzt Software installieren will, dann kann das sehr, sehr einfach sein.</span> </span><br>
+<span data-start="00:04:49.647" data-end="00:04:54.014"><span title="4:50">Dann sucht man halt danach und dann ist es halt upgade install WIM.</span> </span><br>
+<span data-start="00:04:54.653" data-end="00:04:58.987"><span title="4:55">Da kann man mal gucken, was würde denn da installiert.</span> <span title="4:57">Und jetzt ist natürlich immer so ein bisschen die Schwierigkeit,</span> </span><span data-start="00:04:58.987" data-end="00:05:03.147"><span title="4:59">klar mit der Internetverbindung hier bei so einer Konferenz ist das immer ein bisschen wackelig.</span> </span><br>
+<span data-start="00:05:03.646" data-end="00:05:08.039"><span title="5:04">Das heißt, hier kann es jetzt natürlich sein, dass sowas an der Netzwerkgeschwindigkeit scheitert.</span> </span><br>
+<span data-start="00:05:08.147" data-end="00:05:11.631"><span title="5:08">Aber in dem Fall kommt noch eine Kleinigkeit hinzu.</span> </span><br>
+<span data-start="00:05:12.396" data-end="00:05:16.843"><span title="5:12">Wir haben natürlich immer die Frage zu beantworten und die ist ganz wichtig für unseren Vortrag.</span> </span><br>
+<span data-start="00:05:17.311" data-end="00:05:19.103"><span title="5:17">Wer darf denn eigentlich Software installieren?</span> </span><br>
+<span data-start="00:05:19.958" data-end="00:05:24.954"><span title="5:20">Und natürlich haben wir unter Windows wie auch unter anderen Betriebssystemen immer sofort einen administrativen Blick.</span> </span><br>
+<span data-start="00:05:25.711" data-end="00:05:30.815"><span title="5:26">Klar, ein Administrator, was immer das genau sein soll, der darf das.</span> </span><br>
+<span data-start="00:05:31.634" data-end="00:05:36.387"><span title="5:32">Und auch in der Linux- und Unix-Welt hat man natürlich relativ schnell erkannt, dass immer</span> </span><span data-start="00:05:36.387" data-end="00:05:40.303"><span title="5:36">alles mit vollen administrativen Rechten zu tun, jetzt nicht das Feinste vom Fein ist.</span> </span><br>
+<span data-start="00:05:40.816" data-end="00:05:45.029"><span title="5:41">Also hat man dann dort in den gängigen Distributionen, das ist das heute fast immer so vorkonfiguriert,</span> </span><span data-start="00:05:45.633" data-end="00:05:50.067"><span title="5:46">gesagt, okay, also wenn jemand eine administrative Änderung machen will, dann muss er das dazu</span> </span><span data-start="00:05:50.067" data-end="00:05:53.787"><span title="5:50">schreiben, sudo, und dann kann er installieren, dann muss man das Passwort vielleicht nur</span> </span><span data-start="00:05:53.787" data-end="00:05:58.740"><span title="5:54">eingeben und dann wird das Ganze installiert, einschließlich aller Abhängigkeiten.</span> </span><br>
+<span data-start="00:05:59.226" data-end="00:06:01.107"><span title="5:59" style="background: rgba(209, 72, 54, 0.20);">Das kennt natürlich jeder.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[6:02]</small> <span data-start="00:06:02.341" data-end="00:06:07.796"><span title="6:02" style="background: rgba(209, 72, 54, 0.10);">Also ich behaupte mal, jeder im Raum kennt das, so das ist der ideale Package Manager und jetzt muss man natürlich dazusagen,</span> </span><span data-start="00:06:08.120" data-end="00:06:14.512"><span title="6:08" style="background: rgba(209, 72, 54, 0.10);">ich hätte tausend andere Lösungen nennen können, auch durchaus Sachen, die noch älter sind, wenn man an die BSD-Welt denkt.</span> </span><br>
+<span data-start="00:06:14.998" data-end="00:06:20.345"><span title="6:15" style="background: rgba(209, 72, 54, 0.10);">Aber ich glaube, Aptitude, DPKG ist heute wirklich ein Role Model. Wir werden gleich sehen, warum.</span> </span><br>
+<span data-start="00:06:21.183" data-end="00:06:28.798"><span title="6:21" style="background: rgba(209, 72, 54, 0.10);">Ja, und das Interessante ist, und das macht mich jetzt, ich möchte jetzt eigentlich gar keine Scherze darüber machen,</span> <span title="6:27">Wie alt das ist?</span> </span><br>
+<span data-start="00:06:29.663" data-end="00:06:34.291"><span title="6:30">Debian und Linux?</span> <span title="6:31">Ich gehe zurück auf zwei Menschen, die das erfunden haben, Deborah und Ian.</span> </span><br>
+<span data-start="00:06:34.291" data-end="00:06:41.537"><span title="6:34">Und die traurige Wahrheit ist, ich sage das mal dabei,</span> <span title="6:37">vielleicht um auch einen Gruß in die Stratosphäre zu schicken,</span> </span><span data-start="00:06:42.291" data-end="00:06:45.039"><span title="6:42">der Ian Murdoch heißt er, glaube ich, der ist schon lange verstorben.</span> </span><br>
+<span data-start="00:06:46.146" data-end="00:06:49.291"><span title="6:46">Und wenn man jetzt heute hier sitzt und wir reden über einen Package-Manager für Windows</span> </span><span data-start="00:06:49.291" data-end="00:06:53.888"><span title="6:49">und man guckt sich das an, das erschreckt einen, oder?</span> </span><br>
+<span data-start="00:06:54.581" data-end="00:06:59.172"><span title="6:55">Also wir haben einfach in der Linux-Unix-Welt, da ist ein Package-Manager völlig selbstverständlich.</span> </span><br>
+<span data-start="00:07:00.099" data-end="00:07:09.462"><span title="7:00">Und wir, wenn ich das so sagen darf, eiern rum.</span> <span title="7:03">Selbst Aptitude, dieses Frontend, geht in der Zeit zurück, da war ich noch Lehrer, also Referendariat und so.</span> </span><br>
+<span data-start="00:07:10.029" data-end="00:07:16.114"><span title="7:10">So lange ist das her. Wahnsinn.</span> <span title="7:12">Und ja, der Windows-Admin, was macht der?</span> </span><br>
+<span data-start="00:07:17.267" data-end="00:07:18.032"><span title="7:17">Dummes Gesicht.</span> </span><br>
+<span data-start="00:07:19.238" data-end="00:07:23.451"><span title="7:19">Wir haben im Vorfeld überlegt, was könnte man so nennen?</span> <span title="7:22" style="background: rgba(209, 72, 54, 0.30);">Ich meine, wir haben ja keine Zeit.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[7:26]</small> <span data-start="00:07:25.630" data-end="00:07:28.360"><span title="7:26">Wir könnten jetzt darüber diskutieren, welche Anfänge es gegeben hat.</span> </span><br>
+<span data-start="00:07:28.360" data-end="00:07:33.588"><span title="7:28">Da wird der eine sagen, ja, wir haben doch SMS, wir haben dieses Tool, jenes Tool, wir haben MSI Exec.</span> </span><br>
+<span data-start="00:07:34.299" data-end="00:07:38.278"><span title="7:34">Ist das ein Paketmanager? Da ist die Frage, wie man das definiert.</span> </span><br>
+<span data-start="00:07:39.043" data-end="00:07:44.210"><span title="7:39">Aber vor allem dieses eine Tool, mit dem man Software bekommt, wieder entfernen kann,</span> </span><span data-start="00:07:44.688" data-end="00:07:50.611"><span title="7:45">und im Idealfall alle Betriebssystemaspekte, also Anwendungssoftware, Treiber, Betriebssystemupdates,</span> </span><span data-start="00:07:51.016" data-end="00:07:55.211"><span title="7:51" style="background: rgba(209, 72, 54, 0.10);">Das, was in der Linux-Welt natürlich auch ein Stück weit einfacher zu implementieren ist,</span> </span><span data-start="00:07:55.760" data-end="00:07:57.957"><span title="7:56" style="background: rgba(209, 72, 54, 0.10);">weil der Distributor genau da drin seinen Sinn und Zweck sieht.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[8:00]</small> <span data-start="00:07:59.667" data-end="00:08:05.267"><span title="8:00" style="background: rgba(209, 72, 54, 0.10);">Weil das ja alles Open Source ist und der Distributor diese losen Fäden zusammenbringt.</span> </span><br>
+
+
+<h2 id="chapter3" class="chapter">Vergleich von Package-Management-Systemen in Linux und Windows</h2>
+<br>
+
+<small style="opacity: 0.5;">[8:07]</small> <span data-start="00:08:06.707" data-end="00:08:10.880"><span title="8:07" style="background: rgba(209, 72, 54, 0.10);">Deswegen macht das unter Linux hundertprozentig Sinn, aber umgekehrt heißt es nicht auch in der Windows-Welt,</span> </span><span data-start="00:08:10.880" data-end="00:08:15.295"><span title="8:11" style="background: rgba(209, 72, 54, 0.10);">dass wir da nicht vielleicht auch mal irgendwie was bräuchten an der Stelle.</span> </span><br>
+<span data-start="00:08:15.844" data-end="00:08:19.640"><span title="8:16">Ja, damit komme ich dann auch zu dem, wie ist das denn unter Windows im Moment gemacht,</span> </span><span data-start="00:08:19.640" data-end="00:08:20.640"><span title="8:20">was ist für uns Alltag?</span> </span><br>
+<span data-start="00:08:21.615" data-end="00:08:25.880"><span title="8:22">Und natürlich ist das so bizarr, dass ich in jedem PowerShell-Grundkurs mit diesem Registry</span> </span><span data-start="00:08:25.880" data-end="00:08:33.516"><span title="8:26">Key reüssiere.</span> <span title="8:27">Eine der Übungen, die ich ständig mit den Leuten mache, wir schreiben mal eine Inventarisierung.</span> </span><br>
+<span data-start="00:08:33.696" data-end="00:08:38.800"><span title="8:34">Diese Beispielgrippe gibt es Hunderttausende im Netz und die basieren im Kern alle darauf,</span> </span><span data-start="00:08:38.800" data-end="00:08:42.158"><span title="8:39">dass man, und jetzt man muss sich die Feinheiten an der Stelle natürlich mal angucken, dass,</span> </span><span data-start="00:08:43.640" data-end="00:08:50.040"><span title="8:44" style="background: rgba(209, 72, 54, 0.11);">einen Uninstall-String ausliest. Wenn man das jetzt zu Ende denkt. Software unter Windows</span> </span><span data-start="00:08:50.040" data-end="00:08:57.080"><span title="8:50" style="background: rgba(209, 72, 54, 0.11);">ist einfach, da werden Dateien rüber kopiert. Und wenn man Glück hat, erstellt der Installer,</span> </span><span data-start="00:08:57.264" data-end="00:09:02.060"><span title="8:57" style="background: rgba(209, 72, 54, 0.11);">der von mir aus MSI-Exec oder irgendwas, hinterlässt hier etwas, dass man es wieder</span> </span><span data-start="00:09:02.060" data-end="00:09:06.040"><span title="9:02" style="background: rgba(209, 72, 54, 0.11);">wegbekommt. Und daran sieht man, dass was installiert ist. Jetzt könnte man kätzerisch</span> </span><span data-start="00:09:06.040" data-end="00:09:11.240"><span title="9:06" style="background: rgba(209, 72, 54, 0.11);">sagen, ja, unter macOS ist das noch archaischer. Gut, darüber wollen wir nicht diskutieren.</span> </span><br>
+<span data-start="00:09:11.955" data-end="00:09:18.068"><span title="9:12">Das wäre ein anderes Thema, aber im Vergleich zu dem, was wir gerade gesehen haben, ist das</span> <span title="9:17">mehr als fragwürdig.</span> </span><br>
+<span data-start="00:09:19.571" data-end="00:09:22.155"><span title="9:20" style="background: rgba(209, 72, 54, 0.18);">Ja, und dann ist halt der Punkt, was machen wir jetzt?</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[9:24]</small> <span data-start="00:09:23.767" data-end="00:09:26.697"><span title="9:24">Und dann hat er, jetzt müsste ich eigentlich dir das Wort übergeben.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[9:28]</small> <span data-start="00:09:28.257" data-end="00:09:33.426"><span title="9:28">Dann hat es vor einigen Jahren mal Package Management gegeben in Form von OneGet.</span> </span><br>
+<span data-start="00:09:34.470" data-end="00:09:38.755"><span title="9:34">Ja, und vielleicht kannst du ein, zwei Sätze sagen.</span> <span title="9:36">Du hast mal vor einem der vergangenen PowerShell-CDDs darüber</span> </span><span data-start="00:09:39.137" data-end="00:09:42.297"><span title="9:39">einen Fußrag gehalten, weil das eigentlich eine geniale Architektur ist, oder?</span> </span><br>
+<span data-start="00:09:42.297" data-end="00:09:46.497"><span title="9:42">Ja, diese OneGet-Architektur, die nutzen wir heute zum Beispiel dazu,</span> </span><span data-start="00:09:46.497" data-end="00:09:48.617"><span title="9:46">um PowerShell-Pakete zu installieren.</span> </span><br>
+<span data-start="00:09:48.919" data-end="00:09:49.963"><span title="9:49">Darauf basiert das nämlich genau.</span> </span><br>
+<span data-start="00:09:50.494" data-end="00:09:56.391"><span title="9:50">Diese Package Provider kann man sich über Get-Package Provider direkt in der PowerShell anschauen.</span> </span><br>
+<span data-start="00:09:56.760" data-end="00:10:04.799"><span title="9:57">Da gibt es einige, die wir nutzen, unter anderem eben, wie gesagt, für die Installation von PowerShell-Modulen aus der PowerShell-Gallery,</span> </span><span data-start="00:10:05.690" data-end="00:10:09.257"><span title="10:06">aber auch für andere Themen.</span> </span><br>
+<span data-start="00:10:09.257" data-end="00:10:16.961"><span title="10:09">Es gibt zum Beispiel einen Provider von Schokolatti, vielleicht kennt das der eine oder andere Vorgänger von dem, was wir jetzt gleich noch hier zeigen werden.</span> </span><br>
+<span data-start="00:10:17.753" data-end="00:10:25.897"><span title="10:18">Und in dem, ich glaube, in dem letzten PowerShell Saturday hatte ich einen primitiven eigenen</span> </span><span data-start="00:10:26.278" data-end="00:10:29.051"><span title="10:26">Package Provider vorgestellt.</span> <span title="10:27">Wir haben uns das jetzt vor ein paar Tagen angeschaut.</span> </span><br>
+<span data-start="00:10:29.411" data-end="00:10:35.857"><span title="10:29">Es ist in meinem GitHub-Account zu finden und ist tatsächlich dem Winget von heute</span> <span title="10:35">sehr ähnlich.</span> </span><br>
+<span data-start="00:10:36.253" data-end="00:10:42.248"><span title="10:36">Also ich habe da auch mit ein paar Konfigurationsdateien gearbeitet, um Pakete zu installieren und</span> <span title="10:41">zu deinstallieren.</span> </span><br>
+<span data-start="00:10:42.581" data-end="00:10:49.057"><span title="10:43" style="background: rgba(209, 72, 54, 0.12);">Das war nur so ein technisches Gedankenmodell, weil ich sehr viel auch im Bereich Software-Deployment</span> </span><span data-start="00:10:49.057" data-end="00:10:53.060"><span title="10:49" style="background: rgba(209, 72, 54, 0.12);">arbeite und warum nicht eben diesen Package-Provider dafür verwenden.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[10:54]</small> <span data-start="00:10:54.149" data-end="00:10:58.577"><span title="10:54" style="background: rgba(209, 72, 54, 0.12);">Mit XML-Manifest.</span> <span title="10:54" style="background: rgba(209, 72, 54, 0.12);">Und das ist interessant, wer sich jetzt ein bisschen mit Winget auskennt, der weiß, das</span> </span><span data-start="00:10:58.577" data-end="00:10:59.731"><span title="10:59" style="background: rgba(209, 72, 54, 0.12);">ist der besondere Pitch.</span> </span><br>
+<span data-start="00:11:00.379" data-end="00:11:04.286"><span title="11:00" style="background: rgba(209, 72, 54, 0.12);">Das war da auch schon drin.</span> <span title="11:02" style="background: rgba(209, 72, 54, 0.12);">Sehr, sehr interessant.</span> </span><br>
+<span data-start="00:11:04.617" data-end="00:11:09.617"><span title="11:05" style="background: rgba(209, 72, 54, 0.12);">Wichtig ist, heute denken wir im PowerShell-Kontext eigentlich nur noch an eine Schnittstelle,</span> </span><span data-start="00:11:09.617" data-end="00:11:09.948"><span title="11:10" style="background: rgba(209, 72, 54, 0.12);">die brauchen wir eigentlich.</span> </span><br>
+<span data-start="00:11:10.617" data-end="00:11:17.321"><span title="11:11">Können wir nicht eigentlich auch alles mit Nugget machen?</span> <span title="11:14">Also eine Schnittstelle, die irgendwie so der Klebstoff ist, damit wir Module downloaden.</span> </span><br>
+<span data-start="00:11:17.744" data-end="00:11:23.617"><span title="11:18">Aber OneGit könnte viel mehr.</span> <span title="11:20">Und ich glaube, das war auch mal angedacht in einem viel größeren Rahmen.</span> </span><br>
+<span data-start="00:11:23.794" data-end="00:11:27.617"><span title="11:24">Aber, wie so oft, ich weiß gar nicht, ob ihr das alle mitgekriegt habt.</span> </span><br>
+<span data-start="00:11:27.617" data-end="00:11:29.617"><span title="11:28">Ich glaube, du hattest das noch gar nicht mitgekriegt.</span> </span><br>
+<span data-start="00:11:30.329" data-end="00:11:33.903"><span title="11:30">Das ist ein weiteres von vielen, vielen Projekten auf dem Friedhof.</span> </span><br>
+<span data-start="00:11:34.750" data-end="00:11:40.133"><span title="11:35">Das hat Microsoft aufgegeben.</span> <span title="11:37">Da sind die ganz groß drin.</span> <span title="11:39">Da geht schnell mal was über Bord.</span> </span><br>
+<span data-start="00:11:40.617" data-end="00:11:42.500"><span title="11:41">Und das ist der einzige Grund, warum ich die Folien mitgebracht habe.</span> </span><br>
+<span data-start="00:11:42.617" data-end="00:11:45.516"><span title="11:43">Ihr werdet sehen, ich habe nicht so viele Folien, aber die wollte ich mal mitbringen.</span> </span><br>
+<span data-start="00:11:46.290" data-end="00:11:46.569"><span title="11:46">Ja.</span> </span><br>
+<span data-start="00:11:48.046" data-end="00:11:50.566"><span title="11:48">Und er hat es gerade gesagt, Chocolaty, oder wie immer man das ausspricht.</span> </span><br>
+<span data-start="00:11:51.008" data-end="00:11:55.005"><span title="11:51">Was ist jetzt angesichts dieser Misere?</span> <span title="11:54" style="background: rgba(209, 72, 54, 0.15);">Also wir hätten vielleicht mal was gehabt.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[11:57]</small> <span data-start="00:11:57.111" data-end="00:12:00.321"><span title="11:57">Haben sie aufgegeben. Jetzt kann man diskutieren, wo sind so Ansätze.</span> </span><br>
+<span data-start="00:12:01.360" data-end="00:12:06.961"><span title="12:01">Aber was auch klar ist, ist, wir haben halt vor allem</span> <span title="12:05">Third-Party-Applikationen, die ganz interessant sind.</span> </span><br>
+<span data-start="00:12:06.961" data-end="00:12:10.841"><span title="12:07">Davon gibt es welche wie Sand am Meer.</span> <span title="12:09">Chocolaty ist vielleicht die prominenteste.</span> </span><br>
+
+
+<h2 id="chapter4" class="chapter">Einführung in Scoop als Paketmanager für Windows</h2>
+<br>
+
+<small style="opacity: 0.5;">[12:13]</small> <span data-start="00:12:13.063" data-end="00:12:15.041"><span title="12:13">Da weiß man gar nicht, wo man anfangen, wo man aufhören soll.</span> </span><br>
+<span data-start="00:12:15.041" data-end="00:12:18.201"><span title="12:15">Ich will euch eine zeigen, die später noch interessant wird,</span> </span><span data-start="00:12:18.201" data-end="00:12:21.041"><span title="12:18">nämlich Scoop. Später in zehn Minuten.</span> </span><br>
+<span data-start="00:12:22.321" data-end="00:12:30.801"><span title="12:22">Und dafür gehe ich mal einmal kurz hier rein.</span> <span title="12:25">Und wundert euch jetzt bitte nicht, wenn ich hier mit der ISE arbeite.</span> </span><br>
+<span data-start="00:12:30.801" data-end="00:12:33.687"><span title="12:31">Das ist ein relativ leeres System, mit dem ich hier arbeite.</span> </span><br>
+<span data-start="00:12:34.426" data-end="00:12:37.720"><span title="12:34">Da ist nicht so wirklich viel drauf.</span> <span title="12:36">Auch noch kein Visual Studio Code.</span> </span><br>
+<span data-start="00:12:37.945" data-end="00:12:41.761"><span title="12:38">Deswegen muss ich jetzt hier mal eben diesen Weg gehen.</span> </span><br>
+<span data-start="00:12:41.996" data-end="00:12:48.001"><span title="12:42">Wer arbeitet noch mit der ISE?</span> <span title="12:44">Mal so nebenher gefragt.</span> <span title="12:46">Wer nur noch mit Code?</span> </span><br>
+<span data-start="00:12:48.001" data-end="00:12:50.765"><span title="12:48">Ja, also würde man sagen, es ist sogar eine Minderheit.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[12:52]</small> <span data-start="00:12:52.169" data-end="00:12:56.761"><span title="12:52">Was ist Scoop? Ich habe jetzt aus Zeitgründen und wie gesagt, auf Konferenzen hast du immer</span> </span><span data-start="00:12:56.761" data-end="00:13:00.321"><span title="12:57">ein wackeliges Internet. Da wollte ich nichts riskieren. Deswegen habe ich die Befehle zum</span> </span><span data-start="00:13:00.321" data-end="00:13:04.745"><span title="13:00">Teil. Ich zeige euch das gleich schon ausgeführt. Scoop ist einer von vielen.</span> </span><br>
+<span data-start="00:13:05.267" data-end="00:13:12.801"><span title="13:05">Das Interessante an Scoop ist, dass der oder die Entwickler einen etwas anderen Ansatz verfolgen,</span> </span><span data-start="00:13:12.801" data-end="00:13:17.801"><span title="13:13">der gleich noch interessant wird, nämlich den Ansatz, dass man Pakete bitte grundsätzlich</span> </span><span data-start="00:13:17.801" data-end="00:13:21.922"><span title="13:18">im Benutzerkontext herunterladen und bereitstellen kann.</span> </span><br>
+<span data-start="00:13:22.660" data-end="00:13:28.826"><span title="13:23">Also keine Installation in diesem traditionellen Sinne.</span> <span title="13:26">Da denken die meisten Windows Admins an eine systemweite Installation,</span> </span><span data-start="00:13:29.375" data-end="00:13:32.400"><span title="13:29">sondern eine Installation, die sich eher mit Flatpak vergleichen lässt,</span> </span><span data-start="00:13:33.075" data-end="00:13:35.721"><span title="13:33">die sich vielleicht vergleichen lässt mit dem, was der Store macht.</span> </span><br>
+<span data-start="00:13:35.721" data-end="00:13:37.881"><span title="13:36">Wir kommen gleich zu MSIX und so weiter.</span> </span><br>
+<span data-start="00:13:38.306" data-end="00:13:42.492"><span title="13:38">Also dieses etwas Modernere, was wir alle hassen,</span> <span title="13:41" style="background: rgba(209, 72, 54, 0.20);">Weil wir wollen ein System weiterentwickeln.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[13:44]</small> <span data-start="00:13:44.328" data-end="00:13:48.973"><span title="13:44">Und bei Scoop ist es so, das ist im Prinzip PowerShell-Code oder zumindest der größte Teil.</span> </span><br>
+<span data-start="00:13:49.315" data-end="00:13:51.178"><span title="13:49">Du kannst dir das alles angucken.</span> </span><br>
+<span data-start="00:13:51.278" data-end="00:13:55.635"><span title="13:51">Ich habe das bereits heruntergeladen an der Stelle.</span> </span><br>
+<span data-start="00:13:56.202" data-end="00:14:00.721"><span title="13:56">Dafür muss ich nur in den richtigen Ordner gehen.</span> <span title="13:58">Wer sich jetzt Spaß hat, kann sich das hier mal angucken.</span> </span><br>
+<span data-start="00:14:01.306" data-end="00:14:04.484"><span title="14:01">Das ist dann etwas längerer Ansatz.</span> </span><br>
+<span data-start="00:14:05.178" data-end="00:14:07.347"><span title="14:05">Ja, damit kann man dann eben Sachen installieren.</span> </span><br>
+<span data-start="00:14:08.319" data-end="00:14:15.738"><span title="14:08">Und damit das jetzt technisch funktioniert,</span> <span title="14:12">kennt der etwas, einen Begriff, den viele andere auch kennen, wenn in einem anderen Zusammenhang,</span> </span><span data-start="00:14:15.738" data-end="00:14:21.178"><span title="14:16">nämlich sogenannte Shims, Application Shims, so Zwischenscheiben, kennt man an vielen anderen</span> </span><span data-start="00:14:21.178" data-end="00:14:25.858"><span title="14:21">Stellen aus Tools auch. Also kleine Erweiterungen, die es ermöglichen, Programme, die nicht für</span> </span><span data-start="00:14:25.858" data-end="00:14:29.745"><span title="14:26">diesen benutzerzentrierten Ansatz gedacht sind, dass man überhaupt installieren kann.</span> </span><br>
+<span data-start="00:14:30.618" data-end="00:14:35.338"><span title="14:31">So, wenn ich das jetzt installiere, das habe ich, das habe ich bereits einfach ausgeführt,</span> </span><span data-start="00:14:35.338" data-end="00:14:40.808"><span title="14:35">das ist der Zustand, in dem der ist. Da kann man dann mal gucken, was geht hier ab und ein Bucket,</span> </span><span data-start="00:14:41.177" data-end="00:14:44.898"><span title="14:41">Ihr kennt wahrscheinlich den Begriff, das ist ein Eimer oder sowas, das ist eine Kategorie.</span> </span><br>
+<span data-start="00:14:45.625" data-end="00:14:49.898"><span title="14:46">Da kann man mal gucken, was hat man, der unterscheidet zwischen Main und anderen Dingen.</span> </span><br>
+<span data-start="00:14:49.898" data-end="00:14:53.898"><span title="14:50">Und wenn man dann jetzt hier zum Beispiel sagt, ich würde gerne mal Firefox bereitstellen.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[14:56]</small> <span data-start="00:14:55.590" data-end="00:14:58.768"><span title="14:56">So die Verbindung, das jetzt mitmacht, werdet ihr das finden.</span> </span><br>
+
+
+<h2 id="chapter5" class="chapter">YouTube-Downloader gesperrt, aber alternative Programme verfügbar</h2>
+<br>
+
+<small style="opacity: 0.5;">[15:00]</small> <span data-start="00:15:00.451" data-end="00:15:04.898"><span title="15:00">Da wird ihr mir die Möglichkeit geben, ähnlich wie bei Winget auch, das werden einige ja schon kennen,</span> </span><span data-start="00:15:04.898" data-end="00:15:12.578"><span title="15:05" style="background: rgba(209, 72, 54, 0.11);">die entsprechenden Installationsoptionen mir anzuzeigen oder hier sowas und installieren</span> </span><span data-start="00:15:12.578" data-end="00:15:15.698"><span title="15:13" style="background: rgba(209, 72, 54, 0.11);">würde man es dann auf diese Art und Weise.</span> </span><br>
+<span data-start="00:15:15.698" data-end="00:15:19.572"><span title="15:16" style="background: rgba(209, 72, 54, 0.11);">Jetzt passiert direkt was richtig Lustiges.</span> <span title="15:18" style="background: rgba(209, 72, 54, 0.11);">Ich habe es mal mitgebracht, weil das so interessant finde.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[15:22]</small> <span data-start="00:15:21.652" data-end="00:15:26.018"><span title="15:22" style="background: rgba(209, 72, 54, 0.11);">Ihr wisst wahrscheinlich, dass der YouTube Downloader, der ursprüngliche, dass er so ein</span> </span><span data-start="00:15:26.018" data-end="00:15:32.738"><span title="15:26" style="background: rgba(209, 72, 54, 0.11);">bisschen unter Beschuss ist von den Content Inhabern, weil man damit ja auf YouTube</span> </span><span data-start="00:15:32.859" data-end="00:15:37.318"><span title="15:33">Film herunterladen kann. Und was ich jetzt lustig fand, ist, dass sie das tatsächlich gesperrt haben.</span> </span><br>
+<span data-start="00:15:37.318" data-end="00:15:41.223"><span title="15:37">Also ihr seht in der Fehlermeldung, wenn ich den herunterladen will, das klappt nicht. Andere,</span> </span><span data-start="00:15:41.798" data-end="00:15:45.278"><span title="15:42">Sachen klappen, werdet ihr gleich sehen. Fand ich ganz interessant, deswegen habe ich das mal</span> </span><span data-start="00:15:45.562" data-end="00:15:50.738"><span title="15:46">mitgebracht. Die Profis wissen, es gibt jede Menge Alternativen zu dem YouTube-Downloader. Und schauen,</span> </span><span data-start="00:15:51.838" data-end="00:15:52.430"><span title="15:52" style="background: rgba(209, 72, 54, 0.40);">Wollen wir mal hin?</span> </span><br>
+<span data-start="00:15:53.952" data-end="00:15:58.602"><span title="15:54" style="background: rgba(209, 72, 54, 0.11);">Der funktioniert und ihr seht an ist already install ich habe das vorher schon gemacht aber</span> </span><span data-start="00:15:58.602" data-end="00:16:05.042"><span title="15:59" style="background: rgba(209, 72, 54, 0.11);">ihr werdet mir glauben dass das funktioniert und jetzt sieht man hier da ist das ganze drin.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[16:06]</small> <span data-start="00:16:05.763" data-end="00:16:11.922"><span title="16:06" style="background: rgba(209, 72, 54, 0.11);">Interessant ist ihr werdet es sehen hier das ist mein benutzerkonto der kepten kirk er hat darunter</span> </span><span data-start="00:16:11.922" data-end="00:16:15.962"><span title="16:12" style="background: rgba(209, 72, 54, 0.11);">in unterhalb seines home directories und scoop verzeichnis da landen die sachen alle drin wenn</span> </span><span data-start="00:16:15.962" data-end="00:16:22.082"><span title="16:16" style="background: rgba(209, 72, 54, 0.11);">die ganzen quatsch loswerden will shift entfernen und vorbei ist der spaß das ist natürlich das</span> </span><span data-start="00:16:22.082" data-end="00:16:27.562"><span title="16:22">Interessante. Ist das geeignet für ein unternehmensweites Deployment bei der,</span> </span><span data-start="00:16:28.160" data-end="00:16:33.642"><span title="16:28">Commerzbank, bei der Behörde XY? Wahrscheinlich nicht. Ich weiß es nicht.</span> </span><br>
+<span data-start="00:16:33.742" data-end="00:16:39.122"><span title="16:34">Kann er gleich was zu erzählen bei MSIX. Aber das ist natürlich erstmal ein</span> </span><span data-start="00:16:39.122" data-end="00:16:44.202"><span title="16:39">tolles Werkzeug für uns, für Entwickler, für IT-Pros, Dinge, die man ausprobieren</span> </span><span data-start="00:16:44.202" data-end="00:16:48.642"><span title="16:44">will etc. Eine Sache, die ich noch gerne zeigen würde, ich hoffe die Zeit reicht</span> </span><span data-start="00:16:48.642" data-end="00:16:55.682"><span title="16:49">am Ende des Tages. Ich habe ja gesehen, ich habe ja gerade gezeigt, Firefox ist hier eine der Optionen.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[16:56]</small> <span data-start="00:16:56.356" data-end="00:17:06.762"><span title="16:56">Wenn man das jetzt installiert, stellt man fest, das gehört nicht zum Kernbereich, das gehört unter</span> </span><span data-start="00:17:06.762" data-end="00:17:13.882"><span title="17:07">Extras. Deswegen muss man dann erst mal noch ein Bucket installieren. Das seht ihr hier. Dann kann</span> </span><span data-start="00:17:13.882" data-end="00:17:18.602"><span title="17:14">man das Ganze machen. Und ihr seht im Hintergrund, der braucht dann auch ein Git, damit das Ganze</span> </span><span data-start="00:17:18.602" data-end="00:17:24.362"><span title="17:19">funktioniert ich erspare das jetzt aus zeitgründen ich habe ein bisschen was vorbereitet und kann</span> </span><span data-start="00:17:24.362" data-end="00:17:29.322"><span title="17:24">euch schon mal zeigen ich hoffe das habe ich jetzt hier auch auf der maschine richtig gemacht also</span> </span><span data-start="00:17:29.322" data-end="00:17:34.122"><span title="17:29">die powershell zum beispiel powershell 703 habe ich genau mit dem quellcode den ihr gerade gesehen</span> </span><span data-start="00:17:34.122" data-end="00:17:40.882"><span title="17:34">habt mit den zwei drei zahlen bereits installiert und ja ihr seht das funktioniert alles ganz normal</span> </span><span data-start="00:17:40.882" data-end="00:17:45.762"><span title="17:41">warum ich jetzt ausgerechnet so eine alte version installiert habe da komme ich gleich noch zu aber</span> </span><span data-start="00:17:45.762" data-end="00:17:51.642"><span title="17:46">ihr seht, das funktioniert. Es war diese Woche noch 715. Bestens. Also das ist eine alte Version,</span> </span><span data-start="00:17:51.642" data-end="00:17:59.922"><span title="17:52">aber es hat gute Gründe, warum ich das jetzt genau so gemacht habe. Ja, interessant ist Scoop.</span> </span><br>
+
+
+<h2 id="chapter6" class="chapter">Scoop ist Teil der wachsenden Popularität von Paketmanagern</h2>
+<br>
+
+<small style="opacity: 0.5;">[18:01]</small> <span data-start="00:18:00.830" data-end="00:18:06.722"><span title="18:01">Weil es recht populär geworden ist in den letzten Monaten. Nach meinem Wahrnehmen begegnet das immer</span> </span><span data-start="00:18:06.722" data-end="00:18:12.353"><span title="18:07">häufiger. Es gibt wahnsinnig viele Package Manager. Chocolaty, habe ich gesagt, ist vermutlich einer,</span> </span><span data-start="00:18:12.882" data-end="00:18:21.802"><span title="18:13">der Prominenterin. Aber den wollte ich mal zeigen, um euch zu zeigen, dass dieser benutzerzentrierte</span> </span><span data-start="00:18:21.802" data-end="00:18:26.522"><span title="18:22">Ansatz offensichtlich für viele Leute ein Thema ist. Und das ist natürlich genau der Übergang</span> </span><span data-start="00:18:26.522" data-end="00:18:32.563"><span title="18:27">zu Andreas, der jetzt natürlich diesen Faden aufnehmen kann und nochmal so ein bisschen</span> </span><span data-start="00:18:32.842" data-end="00:18:37.541"><span title="18:33">zurückspulen und mal überlegen kann, was ist denn jetzt in der Zwischenzeit bei Microsoft passiert?</span> </span><br>
+<span data-start="00:18:37.962" data-end="00:18:44.023"><span title="18:38" style="background: rgba(209, 72, 54, 0.16);">Und in der Zwischenzeit meine ich jetzt natürlich nicht gestern und vorgestern, sondern in den letzten Jahren.</span> </span><br>
+<span data-start="00:18:44.824" data-end="00:18:46.894"><span title="18:45" style="background: rgba(209, 72, 54, 0.20);">Und deswegen übergebe ich jetzt mal.</span> </span><br>
+<span data-start="00:18:48.218" data-end="00:18:53.331"><span title="18:48">An dich und ich klicke gerne für dich.</span> <span title="18:51">Windows Universal Apps, Windows Universal Plattform ist da das Stichwort.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[18:55]</small> <span data-start="00:18:54.762" data-end="00:18:59.876"><span title="18:55">Das haben wir so ab Windows 8, 8.1.</span> <span title="18:58">Das ging noch ein bisschen früher los.</span> </span><br>
+<span data-start="00:19:00.443" data-end="00:19:03.630"><span title="19:00">Thorsten hat jetzt gerade hier die Folie aufgelegt von Softwikity.</span> </span><br>
+<span data-start="00:19:04.521" data-end="00:19:08.788"><span title="19:05">Das ist quasi so der erste, der so mal angefangen hat mit Anwendungsvirtualisierung.</span> </span><br>
+<span data-start="00:19:09.319" data-end="00:19:10.988"><span title="19:09">Das ging so kurz nach 2000 los.</span> </span><br>
+<span data-start="00:19:11.542" data-end="00:19:15.152"><span title="19:12">Ich habe es 2003 kennengelernt.</span> <span title="19:13">Ich erinnere mich noch daran an den Dienstleister.</span> </span><br>
+<span data-start="00:19:15.428" data-end="00:19:21.708"><span title="19:15">Das war damals ADN beziehungsweise Distributor, der das damals bei meinem damaligen Arbeitgeber vorgestellt.</span> </span><br>
+<span data-start="00:19:21.708" data-end="00:19:23.388"><span title="19:22">Und seitdem bin ich da Feuer und Flamme.</span> </span><br>
+<span data-start="00:19:24.182" data-end="00:19:30.384"><span title="19:24">Microsoft hat es dann 2006 gekauft, tatsächlich relativ schnell umgenannt in Microsoft Application Virtualization oder App-V.</span> </span><br>
+<span data-start="00:19:31.555" data-end="00:19:38.792"><span title="19:32">Gibt es nach wie vor und ist auch nicht 2026 abgekündigt, wie man es im Internet sieht, sondern ist eben Teil des Betriebssystems.</span> </span><br>
+<span data-start="00:19:39.630" data-end="00:19:43.852"><span title="19:40">Also tatsächlich ist das M-Dop abgekündigt und den hier gibt es auch nach wie vor unter Server 2022.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[19:45]</small> <span data-start="00:19:45.391" data-end="00:19:51.864"><span title="19:45">Und unter Windows 11 und unter Licht im Windows Lifecycle.</span> <span title="19:49">Andere Sachen verschwinden 2026, aber der bleibt.</span> </span><br>
+<span data-start="00:19:52.467" data-end="00:19:57.628"><span title="19:52">Und der gedachte Nachfolger, wie gesagt, basierend auf Microsoft AppX,</span> </span><span data-start="00:19:57.628" data-end="00:20:06.508"><span title="19:58">da haben wir so die ersten Varianten mit der Windows Universal Plattform</span> <span title="20:03">für Windows 8, Windows 8.1 gesehen, als dann auch der Store rauskam.</span> </span><br>
+<span data-start="00:20:07.024" data-end="00:20:14.828"><span title="20:07">Also Store Deployment gedacht ist eben das Ganze</span> <span title="20:11">auch als moderne Anwendungsvirtualisierung und Anwendungsisolation.</span> </span><br>
+<span data-start="00:20:14.828" data-end="00:20:18.788"><span title="20:15">Das Ganze läuft hier auch mit AppX in einem Container.</span> </span><br>
+<span data-start="00:20:19.393" data-end="00:20:27.428"><span title="20:19">Später ist dann der Begriff MSIX dazugekommen.</span> <span title="20:22">Das ist quasi ein aufgebohrtes AppX, im Grunde ist es heute das Gleiche.</span> </span><br>
+<span data-start="00:20:28.224" data-end="00:20:35.028"><span title="20:28">Aber wir können darüber eben auch Windows 32 Applikationen virtualisiert</span> <span title="20:33">userzentriert bereitstellen.</span> </span><br>
+<span data-start="00:20:35.028" data-end="00:20:40.988"><span title="20:35">Und im Gegensatz zu Scoop nutzen wir da nur ganz, ganz wenig</span> <span title="20:39" style="background: rgba(209, 72, 54, 0.46);">ähm...</span> </span><br>
+<span data-start="00:20:40.692" data-end="00:20:44.763"><span title="20:41">Speicher im Benutzerprofil, also Scoop, was der Thorsten gerade gezeigt hat,</span> </span><span data-start="00:20:45.544" data-end="00:20:47.283"><span title="20:46">installiert sich komplett ins Benutzerprofil.</span> </span><br>
+<span data-start="00:20:47.283" data-end="00:20:51.443"><span title="20:47">Teams macht sowas zum Beispiel auch.</span> <span title="20:49">Ganz eklig, habe ich gerade beim Kunden mitzukämpfen,</span> </span><span data-start="00:20:52.188" data-end="00:20:55.323"><span title="20:52">wo sich die Profile dann mal eben auf ein Gigabyte aufblähen,</span> </span><span data-start="00:20:55.447" data-end="00:20:57.103"><span title="20:55">nur weil Teams installiert wurde.</span> </span><br>
+<span data-start="00:20:57.787" data-end="00:21:02.723"><span title="20:58">Also mit MSIX haben wir dieses Problem nicht, weil die Daten dann unter C,</span> </span><span data-start="00:21:02.723" data-end="00:21:12.065"><span title="21:03">Program Files, Windows Apps quasi als Cache installiert werden und nur</span> <span title="21:08" style="background: rgba(209, 72, 54, 0.11);">Der Benutzerteil der Applikation landet an dem Benutzerprofil, aber die Bereitstellung ist eben.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[21:14]</small> <span data-start="00:21:13.802" data-end="00:21:18.803"><span title="21:14" style="background: rgba(209, 72, 54, 0.11);">Benutzerbasieren. Da kann man auch ganz ganz viel PowerShell drumherum machen. Das spare ich euch</span> </span><span data-start="00:21:18.803" data-end="00:21:24.848"><span title="21:19" style="background: rgba(209, 72, 54, 0.11);">heute. Sondern wir haben uns halt überlegt, was wir zeigen. Thorsten sagte, zeigt doch mal das MSRX</span> </span><span data-start="00:21:24.938" data-end="00:21:33.085"><span title="21:25" style="background: rgba(209, 72, 54, 0.11);">Packaging Tool, mit dem man so eine Windows 32 mit Applikation bauen kann. Und ich habe gesagt,</span> </span><span data-start="00:21:33.958" data-end="00:21:38.109"><span title="21:34">Nein, das dauert zu lange und vielleicht kann ich dann aber ein Video machen und dazu ein bisschen was erzählen.</span> </span><br>
+<span data-start="00:21:38.622" data-end="00:21:44.203"><span title="21:39">Und das haben wir dann auch getan.</span> <span title="21:40">Bevor wir dazu kommen, ich würde ganz gerne nochmal so diesen roten Faden aus meiner Sicht.</span> </span><br>
+
+
+<h2 id="chapter7" class="chapter">Der Fokus auf Benutzerzentrierung und der Store</h2>
+<br>
+
+<small style="opacity: 0.5;">[21:45]</small> <span data-start="00:21:44.995" data-end="00:21:53.203"><span title="21:45">Das Interessante ist, dass wir bei dieser Geräteklasse zum ersten Mal diesen Benutzerfokus ganz klar im Vordergrund haben.</span> </span><br>
+<span data-start="00:21:53.203" data-end="00:21:56.068"><span title="21:53">Und warum war das damals so? Ja, weil es Windows Phone noch gab.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[21:57]</small> <span data-start="00:21:57.076" data-end="00:22:01.203"><span title="21:57">Und beim Windows Phone reden wir nicht von Mehrbenutzersystemen und von Systemweiterinstallation,</span> </span><span data-start="00:22:01.203" data-end="00:22:04.044"><span title="22:01">sondern wir haben ganz selbstverständlich, wie bei iPhone, wie bei Android,</span> </span><span data-start="00:22:04.593" data-end="00:22:10.203"><span title="22:05">wir haben selbstverständlich eine Plattform, die benutzerzentriert ist</span> <span title="22:09">und wo alles andere im Hintergrund läuft,</span> </span><span data-start="00:22:10.203" data-end="00:22:14.145"><span title="22:10">ohne dass der Benutzer jetzt nochmal Run as Administrator ausführen muss.</span> </span><br>
+<span data-start="00:22:14.586" data-end="00:22:16.674"><span title="22:15">Und der eigentliche Witz ist natürlich, das wissen wir alle,</span> </span><span data-start="00:22:17.349" data-end="00:22:24.203"><span title="22:17">dass der eigentliche Pitch an dieser ganzen Plattform,</span> <span title="22:21">nämlich die ARM-Architektur und dieses Zusammenspiel von mobilen Geräten</span> </span><span data-start="00:22:24.203" data-end="00:22:27.063"><span title="22:24">und Desktop-PCs, dass das lange Geschichte ist.</span> </span><br>
+<span data-start="00:22:27.594" data-end="00:22:30.069"><span title="22:28">ARM-Windows gibt es eigentlich nur noch in der Theorie.</span> </span><br>
+<span data-start="00:22:30.736" data-end="00:22:36.803"><span title="22:31" style="background: rgba(209, 72, 54, 0.12);">Telefone sind längst verschwunden, aber übrig geblieben ist der Store, den kaum jemand mag.</span> </span><br>
+<span data-start="00:22:36.803" data-end="00:22:40.483"><span title="22:37" style="background: rgba(209, 72, 54, 0.12);">Das haben wir aber schon wieder jetzt. Das ist ja zurückgekommen quasi.</span> </span><br>
+<span data-start="00:22:40.483" data-end="00:22:46.003"><span title="22:40" style="background: rgba(209, 72, 54, 0.12);">Und diese Applikationsbereitstellung ist immer auch plattformindependent gedacht gewesen.</span> </span><br>
+<span data-start="00:22:46.003" data-end="00:22:49.515"><span title="22:46" style="background: rgba(209, 72, 54, 0.30);">Also die Pakete können heute 32-bit, 64-bit.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[22:51]</small> <span data-start="00:22:51.162" data-end="00:22:56.532"><span title="22:51">Und auch ARM-Applikationen in einem MSIX-Bundle oder AppX-Bundle enthalten.</span> </span><br>
+<span data-start="00:22:56.532" data-end="00:23:00.965"><span title="22:57">Wie gesagt, eigentlich dasselbe, nur dass Microsoft halt damals dazu gesehen hat,</span> </span><span data-start="00:23:01.506" data-end="00:23:05.652"><span title="23:02">dass eben das AppX auch klassische Anwendungen bereitstellen kann und soll,</span> </span><span data-start="00:23:05.652" data-end="00:23:10.472"><span title="23:06">damit eben die Hersteller auch in den Store gehen und von dort aus</span> <span title="23:09">ihre Applikationen verteilen.</span> </span><br>
+<span data-start="00:23:10.985" data-end="00:23:15.932"><span title="23:11">Also der Store war eigentlich immer so der Vordergrund</span> <span title="23:14">und das entwicklungstreibende Element.</span> </span><br>
+<span data-start="00:23:15.932" data-end="00:23:17.737"><span title="23:16">Heute ist es Windows Virtual Desktop.</span> </span><br>
+<span data-start="00:23:18.340" data-end="00:23:24.812"><span title="23:18">Microsoft empfiehlt halt heute MSIX</span> <span title="23:21">und App Attached für Windows Virtual Desktop, bis die Anwender dann feststellen,</span> </span><span data-start="00:23:24.812" data-end="00:23:26.852"><span title="23:25">mit der Kompatibilität ist es nicht so toll.</span> </span><br>
+<span data-start="00:23:27.675" data-end="00:23:30.412"><span title="23:28">Gibt dann auch keinen Anbieter, der den Anwendern beibringen kann,</span> </span><span data-start="00:23:30.412" data-end="00:23:33.428"><span title="23:30">wie man die Sachen doch kompatibel machen kann.</span> <span title="23:33">Da gibt es eine ganze Menge Möglichkeiten.</span> </span><br>
+<span data-start="00:23:34.310" data-end="00:23:41.007"><span title="23:34">Aber wenn ihr nach dem Thema MSRX und MSRX Training sucht,</span> <span title="23:38">ich glaube, da findet ihr nur zwei, drei Unternehmen und eins davon ist meins.</span> </span><br>
+<span data-start="00:23:41.732" data-end="00:23:45.772"><span title="23:42">Ja, dazu haben wir eine Demo mitgebracht.</span> <span title="23:45">So auf die Schnelle.</span> </span><br>
+<span data-start="00:23:45.772" data-end="00:23:48.299"><span title="23:46">Aus Zeitgründen haben wir ein bisschen Feenstaub versprüht.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[23:50]</small> <span data-start="00:23:50.037" data-end="00:23:58.532"><span title="23:50">Und nochmal auch da wieder der Ansatz, Anwendungen eben in diesem Kontext auch wieder benutzerzentriert</span> <span title="23:58">bereitzustellen.</span> </span><br>
+<span data-start="00:23:58.532" data-end="00:24:02.732"><span title="23:59">Es benutzerzentriert oder auch applikationsbasiert, es geht beides, aber in der Regel will man</span> </span><span data-start="00:24:02.732" data-end="00:24:05.332"><span title="24:03">halt, dass die Anwendung am Benutzerprofil hängt.</span> </span><br>
+<span data-start="00:24:05.926" data-end="00:24:11.012"><span title="24:06">Das gelingt da nicht ganz so toll wie mit App-V, aber es geht, man weiß wie.</span> <span title="24:10">Geht los.</span> </span><br>
+<span data-start="00:24:11.435" data-end="00:24:19.267"><span title="24:11">Okay, ja, ich erkläre hier ein bisschen was dazu.</span> <span title="24:13">Es gibt ein ganz interessantes Goodie, Schnellerstellung, hier oben im Hyper-V, das auf jedem Windows</span> </span><span data-start="00:24:19.372" data-end="00:24:24.972"><span title="24:19">Windows 11 Client installiert und dann kann man hier unter anderem ein Paket finden, Windows 10 MSIX,</span> </span><span data-start="00:24:25.434" data-end="00:24:30.812"><span title="24:25">Packaging Environment und das kann man sich hier quasi automatisiert installieren lassen. Ihr seht,</span> </span><span data-start="00:24:30.812" data-end="00:24:39.252"><span title="24:31">ich habe eine exzellente Bandbreite, also ich muss hier mal die Uhr ausblenden. Das ist also nicht</span> </span><span data-start="00:24:39.342" data-end="00:24:43.292"><span title="24:39">ganz das, was es sein soll, aber wir haben das ein bisschen komprimiert, das Video, um das zu zeigen.</span> </span><br>
+<span data-start="00:24:43.292" data-end="00:24:45.293"><span title="24:43" style="background: rgba(209, 72, 54, 0.24);">Also hier kann man sich tatsächlich ein komplettes Paket teilen.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[24:47]</small> <span data-start="00:24:46.706" data-end="00:24:52.881"><span title="24:47" style="background: rgba(209, 72, 54, 0.11);">Komplette Paketierungsumgebung herunterladen und auch recht schnell installieren.</span> </span><br>
+<span data-start="00:24:53.674" data-end="00:24:55.069"><span title="24:54" style="background: rgba(209, 72, 54, 0.11);">Vielleicht jetzt nicht ganz so schnell wie hier in diesem Video.</span> </span><br>
+<span data-start="00:24:55.600" data-end="00:25:04.746"><span title="24:56" style="background: rgba(209, 72, 54, 0.11);">Und dann ist man schon in der Lage, solche Pakete zu bauen.</span> <span title="24:58" style="background: rgba(209, 72, 54, 0.11);">Und diese Pakete kann man unter anderem mit PowerShell, mit AddAppX Package auf dem System bereitstellen.</span> </span><br>
+<span data-start="00:25:05.737" data-end="00:25:08.636"><span title="25:06" style="background: rgba(209, 72, 54, 0.11);">So, genau. Das ist jetzt hier nochmal ein bisschen beschleunigt.</span> </span><br>
+<span data-start="00:25:08.879" data-end="00:25:13.218"><span title="25:09" style="background: rgba(209, 72, 54, 0.11);">Du hast das schon festgestellt, der Andreas ist ein schneller Tipper und muss einen superschnellen PC haben.</span> </span><br>
+<span data-start="00:25:14.154" data-end="00:25:18.476"><span title="25:14">Also das ist quasi so in 20 Jahren, guck mal, so die Vorschau.</span> </span><br>
+
+
+<h2 id="chapter8" class="chapter">Verpacken von Anwendungen mit digitaler Signatur</h2>
+<br>
+
+<small style="opacity: 0.5;">[25:22]</small> <span data-start="00:25:21.536" data-end="00:25:24.164"><span title="25:22">Hier sieht man unter anderem das SelfSign Package, was ich da drauf,</span> </span><span data-start="00:25:24.506" data-end="00:25:27.234"><span title="25:25">SelfSign Certificate, was ich jetzt hier auf den Desktop packe.</span> </span><br>
+<span data-start="00:25:28.152" data-end="00:25:32.401"><span title="25:28">Eine der Voraussetzungen für die Art der Paketierung ist,</span> <span title="25:30">dass man alles digital signiert.</span> </span><br>
+<span data-start="00:25:33.626" data-end="00:25:37.476"><span title="25:34">Und das mache ich mit dem SelfSign Zertifikat.</span> <span title="25:36">Für meine Kunden habe ich auch ein gekauftes,</span> </span><span data-start="00:25:37.578" data-end="00:25:38.748"><span title="25:38">habe ich gerade erst erneuert von Certum.</span> </span><br>
+<span data-start="00:25:40.215" data-end="00:25:49.335"><span title="25:40">Ja, paketieren werden wir hier in 7-zip,</span> <span title="25:43">Einfach, weil es ein sehr kleines Tool ist und weil ich zeigen möchte, dass mittlerweile eben auch bestimmte Sachen funktionieren, die lange Zeit nicht funktioniert haben.</span> </span><br>
+<span data-start="00:25:50.244" data-end="00:25:53.917"><span title="25:50">Das geht dann auch relativ schnell. Erst wird das System vorbereitet hier.</span> </span><br>
+<span data-start="00:25:54.322" data-end="00:25:57.976"><span title="25:54">Hier oben sieht man den MSIX Packaging Driver, den zeigt er ja jetzt installt.</span> </span><br>
+<span data-start="00:25:58.355" data-end="00:26:01.596"><span title="25:58">Der kommt tatsächlich als Optional Feature daher.</span> </span><br>
+<span data-start="00:26:02.073" data-end="00:26:07.976"><span title="26:02">Das heißt, der wird nicht über dieses MSIX Packaging Tool verteilt, sondern kommt quasi über eine andere Schiene.</span> </span><br>
+<span data-start="00:26:07.976" data-end="00:26:12.443"><span title="26:08" style="background: rgba(209, 72, 54, 0.19);">Also wenn man sich das MSI Expecting Tool aus dem Store holt, dann...</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[26:14]</small> <span data-start="00:26:13.902" data-end="00:26:17.521"><span title="26:14">Installiert er sich halt den Treiber von einer anderen Quelle.</span> </span><br>
+<span data-start="00:26:18.124" data-end="00:26:26.109"><span title="26:18">So, hier sieht man, ich wähle das Signaturzertifikat aus,</span> <span title="26:25">das Self-Signing-Certificate, gebe das Passwort an.</span> </span><br>
+<span data-start="00:26:26.838" data-end="00:26:32.582"><span title="26:27">Hier noch ein Timestamp-Server, ganz wichtig,</span> <span title="26:30">wenn die Pakete auch nach Ablauf des Zertifikats laufen sollen,</span> </span><span data-start="00:26:32.852" data-end="00:26:34.562"><span title="26:33">muss man ein Timestamp-Server angeben.</span> </span><br>
+<span data-start="00:26:35.417" data-end="00:26:42.934"><span title="26:35">Ich habe jetzt hier von meinem gekauften Zertifikat</span> <span title="26:40">mal die Zertum.pl genommen.</span> </span><br>
+<span data-start="00:26:43.195" data-end="00:26:47.795"><span title="26:43">Im Grunde ist es egal, welchen man dann nimmt.</span> <span title="26:46">Also wie gesagt, es muss halt nur digital signiert sein.</span> </span><br>
+<span data-start="00:26:48.336" data-end="00:26:53.832"><span title="26:48">Der Name ist auch egal.</span> <span title="26:50">Was wichtig ist, ist dann wiederum hinter hier der Publisher Name.</span> </span><br>
+<span data-start="00:26:53.935" data-end="00:26:57.050"><span title="26:54">Der muss dem Zertifikat entsprechen, sonst kann es nicht signiert werden.</span> </span><br>
+<span data-start="00:26:57.689" data-end="00:27:01.218"><span title="26:58">Versionsnummer kann ich im Grunde auch fast alles eintragen, was ich möchte.</span> </span><br>
+<span data-start="00:27:01.312" data-end="00:27:02.676"><span title="27:01">Die letzte Nummer ist gesperrt.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[27:04]</small> <span data-start="00:27:03.747" data-end="00:27:08.510"><span title="27:04">Das ist dadurch storekompatibel.</span> <span title="27:05">Das heißt, dieses Paket, wenn es dann mit dem offiziellen Zertifikat signiert wäre,</span> </span><span data-start="00:27:08.789" data-end="00:27:11.712"><span title="27:09">könnte ich auch in den Store hochladen und da veröffentlichen.</span> </span><br>
+<span data-start="00:27:11.712" data-end="00:27:14.730"><span title="27:12">Aber ich kann es auch freigeben, gerade so, wenn ich ein Chrome zum Beispiel,</span> </span><span data-start="00:27:15.243" data-end="00:27:19.952"><span title="27:15">paketiere, der hat immer Standard Microsoft Versionsnummern</span> <span title="27:18">und dann hätte ich gern vier Stellen.</span> </span><br>
+<span data-start="00:27:19.952" data-end="00:27:26.910"><span title="27:20">Und im Grunde diese Pakete hier, die sind für den Kunden,</span> <span title="27:23">die sind für Windows Virtual Desktop Umgebung und da brauche ich sowas nicht.</span> </span><br>
+<span data-start="00:27:27.648" data-end="00:27:30.632"><span title="27:28">So jetzt starten wir hier das Ganze auch nochmal.</span> <span title="27:30">Haben wir jetzt installiert.</span> </span><br>
+<span data-start="00:27:30.632" data-end="00:27:33.176"><span title="27:31">Also hier läuft die Installation, die Paketierung.</span> </span><br>
+<span data-start="00:27:33.599" data-end="00:27:37.432"><span title="27:34">Haben wir einmal gestartet das Ganze, damit die entsprechenden Komponente</span> <span title="27:37">registriert werden.</span> </span><br>
+<span data-start="00:27:38.370" data-end="00:27:48.966"><span title="27:38" style="background: rgba(209, 72, 54, 0.11);">Hier ist der userspezifische Teil, der hier nochmal einmal mit aufgezeichnet wird, ist eine vorher-nachher Aufzeichnung, also ein Snapshot-Verfahren und jetzt wird das eigentliche Paket gebaut.</span> </span><br>
+<span data-start="00:27:49.560" data-end="00:27:57.452"><span title="27:50" style="background: rgba(209, 72, 54, 0.25);">Services hat er nicht gefunden deswegen passiert hier auch nix und das Paket ist hier jetzt auch schon fertig also es ging zum 7-zip blitzschnell.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[27:59]</small> <span data-start="00:27:59.409" data-end="00:28:02.899"><span title="27:59">Jetzt können wir es auch schon einmal ausprobieren.</span> <span title="28:01">Also wir hatten jetzt zwei Möglichkeiten,</span> </span><span data-start="00:28:04.108" data-end="00:28:06.862"><span title="28:04">aber ich habe das hier auch noch mal mit aufgezeichnet, wie es getestet wird.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[28:08]</small> <span data-start="00:28:07.997" data-end="00:28:15.339"><span title="28:08">Installiert wird das hier per Doppelklick in dem Video.</span> <span title="28:12">Und die Komponente, die das macht oder die es ermöglicht</span> </span><span data-start="00:28:15.339" data-end="00:28:17.259"><span title="28:15">auf dem Windows 11 System ist der App-Installer.</span> </span><br>
+<span data-start="00:28:18.088" data-end="00:28:20.979"><span title="28:18">Und der App-Installer hat eine ganz interessante zweite Funktion,</span> </span><span data-start="00:28:20.979" data-end="00:28:23.453"><span title="28:21">die der Thorsten dann gleich wieder zeigen wird.</span> </span><br>
+<span data-start="00:28:23.778" data-end="00:28:28.171"><span title="28:24">Da wird es dann spannend.</span> <span title="28:25">Also hier kann ich halt das MSIX Paket oder auch ein Apex Paket</span> </span><span data-start="00:28:28.279" data-end="00:28:29.728"><span title="28:28">per Doppelklick installieren.</span> </span><br>
+<span data-start="00:28:30.196" data-end="00:28:31.988"><span title="28:30">Dann ist es hier auf meinem System drauf.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[28:33]</small> <span data-start="00:28:32.942" data-end="00:28:38.179"><span title="28:33">Übrigens brauche ich</span> <span title="28:34">keine administrativen Rechte, da reichen</span> <span title="28:36">Anwenderrechte für. Und ich kann es</span> </span><span data-start="00:28:38.179" data-end="00:28:39.856"><span title="28:38">genauso einfach wieder runterschmeißen.</span> </span><br>
+<span data-start="00:28:40.179" data-end="00:28:46.148"><span title="28:40">Ihr seht mir jetzt das Kontextmenü ist da von</span> <span title="28:42">7-Zip.</span> <span title="28:44">Das 7-Zip ist einsatzfähig,</span> </span><span data-start="00:28:46.850" data-end="00:28:50.037"><span title="28:47">und die Anwendung ist hier an der</span> <span title="28:48">Stelle auch schon bereitgestellt.</span> </span><br>
+<span data-start="00:28:50.811" data-end="00:28:53.845"><span title="28:51">MSIX ist jetzt quasi für</span> <span title="28:52">euch in 5 Minuten auf die Schnelle.</span> </span><br>
+<span data-start="00:28:54.179" data-end="00:28:55.493"><span title="28:54">Länger hat das Video nicht gedauert.</span> </span><br>
+<span data-start="00:28:56.321" data-end="00:29:01.578"><span title="28:56">Erklärt. Also das Paket ist bereitgestellt. Oft geht es nicht ganz so leicht. Da muss man nämlich dann im Paket auch</span> </span><span data-start="00:29:01.704" data-end="00:29:07.539"><span title="29:02">Schims einbauen. Soll jetzt aber ein relativ großes Update kommen. Gerüchteweise habe ich zumindest von,</span> </span><span data-start="00:29:08.168" data-end="00:29:13.875"><span title="29:08">Microsoft Kollegen in München gehört. Mit 23 H2 kommen dann eine ganze Menge Erweiterungen, die dann auch</span> </span><span data-start="00:29:13.956" data-end="00:29:19.691"><span title="29:14">wiederum ganz viele Kompatibilitäten direkt über das Manifest innerhalb des Pakets ermöglichen, sodass dann die</span> </span><span data-start="00:29:19.979" data-end="00:29:24.669"><span title="29:20">Bereitstellung ein bisschen leichter wird für größere Umgebungen. Und wie gesagt, in Azure Virtual Desktop,</span> </span><span data-start="00:29:25.362" data-end="00:29:29.917"><span title="29:25">haben wir noch eine Funktion, die nennt sich App Attach, wo wir dann diese MSIX-Pakete</span> </span><span data-start="00:29:30.313" data-end="00:29:32.379"><span title="29:30">in eine virtuelle Festplatte hinein installieren.</span> </span><br>
+<span data-start="00:29:32.379" data-end="00:29:35.778"><span title="29:32">Diese virtuelle Festplatte muss dann einfach nur ins System ran gemountet werden,</span> </span><span data-start="00:29:36.219" data-end="00:29:40.918"><span title="29:36">sodass dann Installationszeiten auch entfallen.</span> <span title="29:38">Das heißt gerade für Terminal Services wiederum sehr interessant.</span> </span><br>
+<span data-start="00:29:41.773" data-end="00:29:42.781"><span title="29:42" style="background: rgba(209, 72, 54, 0.42);">Aber.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[29:44]</small> <span data-start="00:29:43.754" data-end="00:29:49.044"><span title="29:44">Weiß kaum einer was von, hat sich auch noch nicht so richtig quasi durchgesetzt, das Ganze.</span> </span><br>
+<span data-start="00:29:49.920" data-end="00:29:54.962"><span title="29:50">Und wenn app wie schon kaum einer gekannt hat mit MSRX, sieht es da eher noch schlimmer aus.</span> </span><br>
+<span data-start="00:29:55.061" data-end="00:29:58.284"><span title="29:55">Aber wie gesagt, ich bin da zuversichtlich, dass da jetzt einiges passiert.</span> </span><br>
+<span data-start="00:29:58.932" data-end="00:30:03.496"><span title="29:59">Ich weiß auch, dass da an einem größeren Konvertierungsprojekt wohl gearbeitet wird.</span> </span><br>
+<span data-start="00:30:03.811" data-end="00:30:09.444"><span title="30:04">Wir haben da den Kollegen von Microsoft in München Pakete bereitgestellt</span> <span title="30:08">für diesen Konverter.</span> </span><br>
+<span data-start="00:30:09.444" data-end="00:30:11.040"><span title="30:09">Also da können wir uns überraschen lassen.</span> </span><br>
+<span data-start="00:30:12.012" data-end="00:30:12.318"><span title="30:12">Das wird auf jeden Fall noch mal spannend.</span> </span><br>
+<span data-start="00:30:13.713" data-end="00:30:21.964"><span title="30:14">Und wenn die Anwendung läuft, wie gesagt, läuft die gekapselt, läuft in der eigenen virtuellen Umgebung und kann auch genauso schnell wiederum deinstalliert werden,</span> </span><span data-start="00:30:21.964" data-end="00:30:26.334"><span title="30:22">indem man dann über Start, über Startmenü geht, rechte Maustaste, uninstalliert, ist es weg.</span> </span><br>
+<span data-start="00:30:27.082" data-end="00:30:30.071"><span title="30:27">Also wird vom Anwender installiert und kann auch genauso schnell wieder deinstalliert werden.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[30:32]</small> <span data-start="00:30:32.006" data-end="00:30:35.940"><span title="30:32">Also so in der Kürze MSIX.</span> <span title="30:35">Was ist mit der Windows-Lizenz?</span> </span><br>
+<span data-start="00:30:37.767" data-end="00:30:43.004"><span title="30:38">Keine. Also das ist das Interessante daran, dass mit der Home Edition läuft das schon.</span> </span><br>
+<span data-start="00:30:43.004" data-end="00:30:48.244"><span title="30:43" style="background: rgba(209, 72, 54, 0.11);">Also ja, im Grunde sind das die gleichen Pakete, nur eben, dass die so ein bisschen</span> </span><span data-start="00:30:48.244" data-end="00:30:53.440"><span title="30:48" style="background: rgba(209, 72, 54, 0.11);">Erweiterung drin haben, aber das Format wird, also ist das gleiche wie für AppX,</span> </span><span data-start="00:30:53.884" data-end="00:30:59.220"><span title="30:54" style="background: rgba(209, 72, 54, 0.11);">also heute. AppX sind die Windows, Modern Windows Application, Universal Windows</span> </span><span data-start="00:30:59.544" data-end="00:31:02.902"><span title="31:00" style="background: rgba(209, 72, 54, 0.11);">Plattform, ist die gleiche Lizenz. Das Ding kann mehr. Und Microsoft hat das</span> </span><span data-start="00:31:03.284" data-end="00:31:07.644"><span title="31:03" style="background: rgba(209, 72, 54, 0.11);">marketingtechnisch einfach mal irgendwann MSIX genannt. Man muss es ja verkaufen,</span> </span><span data-start="00:31:07.844" data-end="00:31:15.109"><span title="31:08" style="background: rgba(209, 72, 54, 0.11);">das Ganze. Und das macht es auch interessant. Also wir haben da Kunden</span> <span title="31:13">gerade so im schulischen Umfeld, Universitätsbereich.</span> </span><br>
+<span data-start="00:31:15.541" data-end="00:31:19.444"><span title="31:16">Wir sind da ganz begeistert von, weil ich eben auf einfachste Art und Weise,</span> </span><span data-start="00:31:19.444" data-end="00:31:22.446"><span title="31:19">ohne dass ich noch Lizenzkosten habe, Applikationen verteilen kann.</span> </span><br>
+<span data-start="00:31:22.684" data-end="00:31:25.723"><span title="31:23">Die kann ich auf den USB-Stick mitgeben, die kann ich aus dem Internet direkt über</span> </span><span data-start="00:31:25.964" data-end="00:31:27.505"><span title="31:26">ein Portal oder so herunterladen.</span> </span><br>
+<span data-start="00:31:27.865" data-end="00:31:31.324"><span title="31:28">Da gibt es schon tolle Lösungen, die man da nutzen kann.</span> </span><br>
+
+
+<h2 id="chapter9" class="chapter">Einfache Nutzung ohne Lizenzkosten für Softwareeinsatz</h2>
+<br>
+
+<small style="opacity: 0.5;">[31:36]</small> <span data-start="00:31:35.580" data-end="00:31:44.510"><span title="31:36">Was gibt es da noch zu erzählen?</span> <span title="31:37">Also, wenn man es einsetzen möchte, hat man da sehr, sehr viele Einsätze und ich brauche keine Lizenzkosten zu fürchten.</span> </span><br>
+<span data-start="00:31:44.630" data-end="00:31:50.390"><span title="31:45">Im Gegensatz dazu, wie brauche ich Enterprise, eine Enterprise-Lizenz oder einen Server, bevor ich es einsetzen kann?</span> </span><br>
+<span data-start="00:31:50.461" data-end="00:31:52.810"><span title="31:50">Das funktioniert hier auch schon in der Home Edition.</span> </span><br>
+<span data-start="00:31:53.854" data-end="00:32:03.406"><span title="31:54">Was bei all diesen Themen sich immer wiederholt, ist, dass die eigentlich interessante Zielgruppe an der Stelle Totermann spielt, nämlich die Softwarehersteller.</span> </span><br>
+<span data-start="00:32:03.604" data-end="00:32:17.477"><span title="32:04">Also, wenn man sich jetzt anguckt, haben denn die ganzen Softwarehäuser Paketoptionen für Technik X, Y, Z, bietet Adobe von Haus aus MSI X-Pakete an oder vielleicht ein Manifest für Winged und so weiter, da werden wir gleich noch drauf kommen.</span> </span><br>
+<span data-start="00:32:18.548" data-end="00:32:26.155"><span title="32:19">Das ist oft das wirkliche Problem. Aber was hoffentlich als roter Faden ankommt, ist dieser benutzerzentrierte Ansatz.</span> </span><br>
+<span data-start="00:32:26.659" data-end="00:32:29.188"><span title="32:27">Der schwebt über alledem.</span> </span><br>
+<span data-start="00:32:29.602" data-end="00:32:34.491"><span title="32:30">Denn auch hier steht wieder, das kommt halt aus der Citrix-Welt, aus der Terminal-Services-Welt,</span> </span><span data-start="00:32:34.990" data-end="00:32:38.710"><span title="32:35">da steht wieder der Benutzer und nicht die Maschine im Fokus der Aufmerksamkeit.</span> </span><br>
+<span data-start="00:32:38.710" data-end="00:32:43.475"><span title="32:39">Also genau konträr zu dem, was die meisten von uns im Kopf haben, wenn wir an Verwaltung.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[32:45]</small> <span data-start="00:32:44.960" data-end="00:32:45.681"><span title="32:45">Reden, über Softwareverwaltung reden.</span> </span><br>
+<span data-start="00:32:46.005" data-end="00:32:51.208"><span title="32:46">Wenn wir jetzt ehrlich sind miteinander, der beste Computer, den ich besitze, ist mein</span> <span title="32:51">Smartphone.</span> </span><br>
+<span data-start="00:32:51.784" data-end="00:32:59.910"><span title="32:52">Und was bedeutet der beste?</span> <span title="32:53">Naja, wenn ich mir angucke, Stromaufnahme versus Leistung, die da rauskommt, wenn ich mir angucke,</span> </span><span data-start="00:32:59.910" data-end="00:33:06.550"><span title="33:00">wie sicher ist so ein Gerät, wie einfach ist es zu bedienen, da habe ich, kann ich für mich sagen,</span> </span><span data-start="00:33:06.550" data-end="00:33:11.350"><span title="33:07">kein besseres Gerät als mein Telefon. Und dass man natürlich aus dieser Welt dann die Anleihen</span> </span><span data-start="00:33:11.350" data-end="00:33:14.870"><span title="33:11">nimmt, da ist alles benutzerzentriert, ist nachvollziehbar. Und ich fange jetzt nicht</span> </span><span data-start="00:33:14.870" data-end="00:33:19.510"><span title="33:15">mit Abo-Diensten aka Cloud an, weil das kann sich jeder zu Ende denken, wo das Sinn macht</span> </span><span data-start="00:33:19.510" data-end="00:33:25.230"><span title="33:20">für den Hersteller. Ja, der dritte Teil ist natürlich das, was so ein bisschen plakativ</span> </span><span data-start="00:33:25.230" data-end="00:33:29.648"><span title="33:25" style="background: rgba(209, 72, 54, 0.32);">draußen vorstand warum wahrscheinlich hier viele hier sind. App-Installer!</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[33:32]</small> <span data-start="00:33:31.628" data-end="00:33:36.918"><span title="33:32">App-Installer, diese Sideloading-Applikation, war schon lange da, als Vinget hinzukam.</span> </span><br>
+<span data-start="00:33:36.918" data-end="00:33:40.837"><span title="33:37">Und es gehört zu diesen großen Mythen, warum?</span> </span><br>
+<span data-start="00:33:41.468" data-end="00:33:45.718"><span title="33:41">Warum gehört das zusammen? Das passt doch überhaupt gar nicht zusammen.</span> </span><br>
+<span data-start="00:33:45.798" data-end="00:33:48.165"><span title="33:46">Und da sind wir jetzt bei den vielen, vielen Missverständnissen.</span> </span><br>
+<span data-start="00:33:49.399" data-end="00:33:53.198"><span title="33:49">Ich fange mal an, ohne dass ich mich jetzt komplett wiederholen will.</span> </span><br>
+<span data-start="00:33:53.198" data-end="00:33:56.358"><span title="33:53">Ich muss kurz dazu sagen, ich habe schon häufiger Vorträge darüber gehalten,</span> </span><span data-start="00:33:56.358" data-end="00:33:58.131"><span title="33:56">unter anderem auch einen hier in Hannover.</span> </span><br>
+<span data-start="00:33:58.698" data-end="00:34:01.219"><span title="33:59">Da gibt es ein Video von, das ist verfügbar.</span> </span><br>
+<span data-start="00:34:01.948" data-end="00:34:06.878"><span title="34:02">Und wer ja so ein bisschen Basics kennenlernen will,</span> <span title="34:05">dem kann ich sehr dieses Video empfehlen.</span> </span><br>
+<span data-start="00:34:06.878" data-end="00:34:09.789"><span title="34:07">Und zwar nicht, weil ich so ein toller Typ bin,</span> <span title="34:08">sondern weil ich all die Sachen da erklärt habe,</span> </span><span data-start="00:34:10.131" data-end="00:34:14.998"><span title="34:10">die ich jetzt nicht noch ein zweites Mal erkläre,</span> <span title="34:12">sondern ich würde gerne die Neuerungen und ergänzenden Dinge</span> </span><span data-start="00:34:15.262" data-end="00:34:15.640"><span title="34:15">jetzt heute dazu beitragen.</span> </span><br>
+<span data-start="00:34:17.180" data-end="00:34:20.249"><span title="34:17">Aber eine Sache will ich kurz wiederholen,</span> <span title="34:19">weil ich es gar nicht oft genug erklären kann.</span> </span><br>
+<span data-start="00:34:21.969" data-end="00:34:29.711"><span title="34:22">Im innersten Kern ist Vinget</span> <span title="34:26" style="background: rgba(209, 72, 54, 0.17);">eine abgekupferte Idee, lasst es mich so sagen.</span> </span><br>
+<span data-start="00:34:30.305" data-end="00:34:33.141"><span title="34:30" style="background: rgba(209, 72, 54, 0.17);">Dieser junge Mann, Kewan Beji, einer meiner Hauptdarsteller,</span> </span><span data-start="00:34:33.807" data-end="00:34:39.398"><span title="34:34" style="background: rgba(209, 72, 54, 0.17);">hat sowie Scoop auch, sowie Chocolaty,</span> <span title="34:36" style="background: rgba(209, 72, 54, 0.17);">eine weitere Lösung gebaut, vor einigen Jahren,</span> </span><span data-start="00:34:39.478" data-end="00:34:40.991"><span title="34:39" style="background: rgba(209, 72, 54, 0.17);">ganz alleine interessanterweise.</span> </span><br>
+<span data-start="00:34:41.540" data-end="00:34:42.683"><span title="34:42" style="background: rgba(209, 72, 54, 0.17);">Und die hieß...</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[34:44]</small> <span data-start="00:34:44.483" data-end="00:34:50.191"><span title="34:44" style="background: rgba(209, 72, 54, 0.17);">UpGate, sage ich das jetzt richtig?</span> <span title="34:47" style="background: rgba(209, 72, 54, 0.17);">Und hat die unter eine MIT-Lizenz gestellt.</span> </span><br>
+<span data-start="00:34:51.001" data-end="00:34:57.238"><span title="34:51" style="background: rgba(209, 72, 54, 0.17);">Und wenn man das jetzt höflich ausdrückt,</span> <span title="34:53">Dann kann man sagen, die Entwickler bei Microsoft haben das gesehen, fanden das klasse und haben</span> </span><span data-start="00:34:57.238" data-end="00:34:58.716"><span title="34:57">dieses Konzept übernommen.</span> </span><br>
+<span data-start="00:34:59.013" data-end="00:35:04.078"><span title="34:59">Interessanterweise haben sie tatsächlich das Konzept, aber nicht die Software übernommen,</span> </span><span data-start="00:35:04.078" data-end="00:35:09.238"><span title="35:04">was man schon daran sieht, dass seine Software in C-Sharp programmiert war und aus Gründen,</span> </span><span data-start="00:35:09.238" data-end="00:35:15.238"><span title="35:09">zu denen ich gleich komme, ist Wingate in C++ programmiert, was einen vollkommen vielen</span> </span><span data-start="00:35:15.238" data-end="00:35:18.089"><span title="35:15">Rückschritt, aber dafür gibt es einen guten Grund.</span> </span><br>
+<span data-start="00:35:18.358" data-end="00:35:24.338"><span title="35:18" style="background: rgba(209, 72, 54, 0.21);">Entscheidend ist, und das eint dann natürlich seine Idee mit den Vorzügen, die Winget heute.</span> </span><br>
+
+
+<h2 id="chapter10" class="chapter">Winget - Eine Lösung ohne arbiträren Code</h2>
+<br>
+
+<small style="opacity: 0.5;">[35:27]</small> <span data-start="00:35:27.424" data-end="00:35:34.077"><span title="35:27">Entscheidend ist, dass Winget genau wie seine ursprüngliche Lösung ohne arbiträren Code</span> <span title="35:33">auskommt.</span> </span><br>
+<span data-start="00:35:34.194" data-end="00:35:38.634"><span title="35:34">Das heißt, im Gegensatz zu Scoop, im Gegensatz zu Chocolaty, funktioniert Winget vollkommen</span> </span><span data-start="00:35:38.634" data-end="00:35:40.019"><span title="35:39">ohne irgendwelche Skripte.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[35:41]</small> <span data-start="00:35:41.297" data-end="00:35:45.420"><span title="35:41">Und das heißt für dich in deiner Firma, wenn du ein sogenanntes Manifest herunterlädst,</span> </span><span data-start="00:35:45.674" data-end="00:35:49.914"><span title="35:46">wenn du Winget benutzt, dann führst du den Code aus, der zu Winget gehört, aber du führst</span> </span><span data-start="00:35:50.227" data-end="00:35:54.354"><span title="35:50">nicht irgendwelche Skripte aus, die irgendjemand bereitgestellt hat.</span> </span><br>
+<span data-start="00:35:54.602" data-end="00:35:58.401"><span title="35:55">Das ist irgendjemand, da sind wir jetzt wieder bei dem, was wir gerade hatten mit Open Source,</span> </span><span data-start="00:35:59.274" data-end="00:36:02.200"><span title="35:59">so positiv viele von uns Open Source sehen.</span> </span><br>
+<span data-start="00:36:02.479" data-end="00:36:06.914"><span title="36:02">Ich kenne jede Menge Kunden, die sagen, ja, okay, und wer garantiert mir Doppelpunkt?</span> </span><br>
+<span data-start="00:36:07.530" data-end="00:36:11.842"><span title="36:08">Naja, ich sage dann immer zurück, und wer garantiert Ihnen das in der gekauften Software</span> <span title="36:11">alles?</span> </span><br>
+<span data-start="00:36:12.994" data-end="00:36:18.179"><span title="36:13">Aber es ist natürlich ein Argument, dass man sagt, da muss man auch ein bisschen vorsichtig</span> <span title="36:18">sein.</span> </span><br>
+<span data-start="00:36:18.914" data-end="00:36:24.314"><span title="36:19">Und deswegen war von vornherein seine Idee, wir verzichten auf Code, sondern wir nehmen</span> </span><span data-start="00:36:24.314" data-end="00:36:30.554"><span title="36:24">einen deklarativen Ansatz, so wie das übrigens du auch gemacht hast in dem Ansatz, und wir</span> </span><span data-start="00:36:30.554" data-end="00:36:38.194"><span title="36:31">beschreiben nur in Form von YAML-Dateien, in dem Fall, du hast das damals mit XML gemacht,</span> </span><span data-start="00:36:38.668" data-end="00:36:43.514"><span title="36:39">wir beschreiben, wo kann man ein Paket herunterladen, was für einen Modus braucht der,</span> </span><span data-start="00:36:43.514" data-end="00:36:49.390"><span title="36:44">welche Einstellungen brauchen wir da, und dann bauen wir das. Und ihr seht, er hat damals sehr</span> </span><span data-start="00:36:49.594" data-end="00:36:54.035"><span title="36:50" style="background: rgba(209, 72, 54, 0.14);">provokant formuliert, er hätte das nur entwickelt, weil Schokoladetheorie so Mist ist und sein,</span> </span><span data-start="00:36:54.714" data-end="00:36:59.266"><span title="36:55" style="background: rgba(209, 72, 54, 0.17);">Mein Hauptkritikpunkt neben diesem Ansatz des arbitraren Codes war, dass.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[37:01]</small> <span data-start="00:37:00.535" data-end="00:37:05.495"><span title="37:01">Und jetzt, Achtung, wem das bekannt vorkommt, bei Chocolaty gibt es immer Project Owner.</span> </span><br>
+<span data-start="00:37:06.251" data-end="00:37:11.185"><span title="37:06">Jede einzelne Software, die da bereitgestellt wird als Paket, hat einen, dem das gehört,</span> </span><span data-start="00:37:11.185" data-end="00:37:13.561"><span title="37:11">dieses Installations-Skript, nämlich der, der als erster da war.</span> </span><br>
+<span data-start="00:37:14.185" data-end="00:37:19.548"><span title="37:14">Und ein großes Problem in der Chocolaty-Welt ist, dass, wenn ich das jetzt mache und übermorgen habe ich darüber gesprochen.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[37:21]</small> <span data-start="00:37:20.885" data-end="00:37:23.685"><span title="37:21">Dann verweisen diese Installations-Skriptien.</span> </span><br>
+<span data-start="00:37:23.685" data-end="00:37:29.585"><span title="37:24">Und dann ist es in Chocolaty relativ kompliziert, bis mir das einer wegnimmt, weil das ja offen sein will.</span> </span><br>
+<span data-start="00:37:29.873" data-end="00:37:31.584"><span title="37:30">Und die Leute einem dann nichts aus der Hand reißen.</span> </span><br>
+<span data-start="00:37:32.185" data-end="00:37:35.745"><span title="37:32">Und deswegen, das hat ihn damals extrem gestört.</span> <span title="37:34">Und da hat er gesagt, das kann man anders machen.</span> </span><br>
+<span data-start="00:37:35.745" data-end="00:37:37.354"><span title="37:36">Das muss man anders machen.</span> </span><br>
+<span data-start="00:37:37.561" data-end="00:37:40.425"><span title="37:38">Und heute, wenn wir über Winget reden, ist das im Prinzip eins zu eins,</span> </span><span data-start="00:37:40.425" data-end="00:37:41.630"><span title="37:40">was er damals entwickelt hat.</span> </span><br>
+<span data-start="00:37:42.891" data-end="00:37:50.145"><span title="37:43">Als Microsoft das übernommen hat,</span> <span title="37:46">diese Idee, haben sie aus merkwürdigen Gründen.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[37:52]</small> <span data-start="00:37:52.091" data-end="00:37:57.789"><span title="37:52">Das Ganze neu implementiert</span> <span title="37:54">und haben das einfach seitlich angeflanscht an den App-Installer,</span> </span><span data-start="00:37:58.365" data-end="00:38:01.210"><span title="37:58">Und haben das dann App-Installer-CLI.exe genannt.</span> </span><br>
+<span data-start="00:38:01.345" data-end="00:38:05.945"><span title="38:01">Das heißt, wer diesen Vortrag von mir hört, der schon ein bisschen älter ist, da werde</span> </span><span data-start="00:38:05.945" data-end="00:38:10.447"><span title="38:06">ich erklären, dass das eigentliche Executable App-Installer-CLI.exe heißt.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[38:12]</small> <span data-start="00:38:11.662" data-end="00:38:17.144"><span title="38:12">Das haben sie dann irgendwann umbenannt.</span> <span title="38:13">Und jetzt wisst ihr, was mit Scott Hanselman damit zu tun hat, denn der hat das zu verantworten.</span> </span><br>
+<span data-start="00:38:18.161" data-end="00:38:21.582"><span title="38:18">Der hat im Austausch mit dieser Produktgruppe gesagt, Leute, ihr habt sie nicht alle, da</span> </span><span data-start="00:38:21.745" data-end="00:38:22.987"><span title="38:22">kann kein Mensch was mit anfangen.</span> </span><br>
+<span data-start="00:38:23.473" data-end="00:38:25.273"><span title="38:23">Ihr müsst einen knackigen Namen nehmen.</span> </span><br>
+<span data-start="00:38:25.894" data-end="00:38:26.822"><span title="38:26">Und so ist Winget entstanden.</span> </span><br>
+<span data-start="00:38:27.524" data-end="00:38:33.033"><span title="38:28">Das heißt, sein Beitrag dazu ist, dass er das Ding quasi durch den Vorschlag der Umbenennung</span> </span><span data-start="00:38:33.150" data-end="00:38:37.030"><span title="38:33">so einen kleinen Boost gegeben hat, fand ich sehr interessant.</span> <span title="38:36">Woher weiß ich das?</span> </span><br>
+<span data-start="00:38:38.174" data-end="00:38:46.051"><span title="38:38">Ich weiß das daher, weil ich längere Gespräche mit diesem jungen Mann hatte, Demetrius Neeland,</span> </span><span data-start="00:38:46.563" data-end="00:38:53.705"><span title="38:47">ein, wie ich finde, ganz toller, interessanter Microsoft-Mitarbeiter, der spät zu diesem</span> </span><span data-start="00:38:53.705" data-end="00:39:01.625"><span title="38:54">Projekt gekommen ist und der jetzt der Teamleiter, sag ich mal, der Projektleiter, der Hauptverantwortliche</span> </span><span data-start="00:39:01.786" data-end="00:39:02.803"><span title="39:02">für Wingate ist.</span> </span><br>
+<span data-start="00:39:03.434" data-end="00:39:07.865"><span title="39:03">Der macht in meinen Augen wirklich eine exzellente Arbeit, weil er gleichzeitig so diese totale</span> </span><span data-start="00:39:07.865" data-end="00:39:13.832"><span title="39:08">Loyalität zu seinem Arbeitgeber verströmt.</span> <span title="39:10">Das heißt, man muss immer genau hinhören, weil natürlich alles positiv formuliert wird.</span> </span><br>
+<span data-start="00:39:14.507" data-end="00:39:18.705"><span title="39:15">Aber wenn man ihm folgt und er spricht ein gutes Englisch, dann hört man eben an dem,</span> </span><span data-start="00:39:18.705" data-end="00:39:20.682"><span title="39:19">was er nicht sagt, sehr genau, was er nicht so toll findet.</span> </span><br>
+<span data-start="00:39:21.762" data-end="00:39:26.174"><span title="39:22">Und welche Sachen er denkt, das sind Challenges, da kann man Sachen anders machen.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[39:28]</small> <span data-start="00:39:27.505" data-end="00:39:31.225"><span title="39:28">Vielleicht kennt der ein oder andere das Interview.</span> <span title="39:29">Ich habe das auf meinem Podcastkanal veröffentlicht.</span> </span><br>
+<span data-start="00:39:31.225" data-end="00:39:34.385"><span title="39:31">Es gibt dazu ein Video, das seht ihr jetzt heute zum ersten Mal.</span> </span><br>
+<span data-start="00:39:34.563" data-end="00:39:35.860"><span title="39:35">Einen ganz kurzen Ausschnitt.</span> </span><br>
+<span data-start="00:39:36.940" data-end="00:39:41.625"><span title="39:37">Und das ist jetzt natürlich so ein bisschen shameless platt, weil ich hier Werbung mache für meinen blöden Podcast.</span> </span><br>
+<span data-start="00:39:42.314" data-end="00:39:46.428"><span title="39:42">Aber ich sage das, auch wenn das jetzt Raimund das Interview geführt hätte, würde ich das mindestens genauso bewerben.</span> </span><br>
+<span data-start="00:39:46.861" data-end="00:39:49.129"><span title="39:47">Weil es geht nicht um mich, es geht um ihn.</span> <span title="39:48">Ich habe nur die Fragen gestellt.</span> </span><br>
+<span data-start="00:39:51.074" data-end="00:39:55.545"><span title="39:51">Das Gespräch geht relativ lang. Ich habe eine kurze zwei Minuten, drei Minuten mitgebracht,</span> </span><span data-start="00:39:55.545" data-end="00:39:59.025"><span title="39:56" style="background: rgba(209, 72, 54, 0.21);">die besonders interessant sind, um das Ganze hier rund zu machen, denn...</span> </span><br>
+<span data-start="00:40:01.201" data-end="00:40:05.892"><span title="40:01">Der Elefant im Raum ist, warum bitte haben Sie das in C++ programmiert?</span> </span><br>
+<span data-start="00:40:06.179" data-end="00:40:08.655"><span title="40:06">Jetzt kann man natürlich sagen, die Entwickler konnten halt C++.</span> </span><br>
+<span data-start="00:40:09.312" data-end="00:40:12.051"><span title="40:09">Jetzt würde ich davon ausgehen, dass in Redmond die Entwickler auch C Sharp können</span> </span><span data-start="00:40:12.051" data-end="00:40:14.858"><span title="40:12">oder irgendeine andere Sprache, die vielleicht etwas geeigneter zu sein scheint.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[40:17]</small> <span data-start="00:40:16.658" data-end="00:40:22.069"><span title="40:17">Aber der Witz ist, es ist nicht 100 Prozent überliefert, aber es scheint so zu sein,</span> </span><span data-start="00:40:23.140" data-end="00:40:29.018"><span title="40:23">dass der ursprüngliche Ansatz war, dass man eine Paketverwaltung für den Nano-Server haben wollte.</span> </span><br>
+<span data-start="00:40:29.927" data-end="00:40:34.731"><span title="40:30">Und deswegen musste man auf die unterste Ebene zu runtergehen, auf eine COM-API, weil in</span> </span><span data-start="00:40:34.731" data-end="00:40:37.264"><span title="40:35">dem Nano-Server ist nicht viel, wo du dich dran andocken kannst.</span> </span><br>
+<span data-start="00:40:37.930" data-end="00:40:42.315"><span title="40:38">Und deswegen hat man das seinerzeit, um an die COM-API, also Technik aus den 90ern, da.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[40:43]</small> <span data-start="00:40:43.291" data-end="00:40:45.573"><span title="40:43">Ranzukommen, hat man das in C++ programmiert.</span> </span><br>
+<span data-start="00:40:45.862" data-end="00:40:52.055"><span title="40:46">Der Witz ist, dass schon bevor er ins Unternehmen kam, war dieser Entwurf längst Geschichte.</span> </span><br>
+<span data-start="00:40:52.658" data-end="00:40:56.538"><span title="40:53">Und die sind dann hingegangen und haben den extrem gegenteiligen Entwurf verfolgt.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[40:57]</small> <span data-start="00:40:57.412" data-end="00:41:01.787"><span title="40:57">Anstatt das für den Server weiterzuentwickeln, was vermutlich der ursprüngliche Ansatz war,</span> </span><span data-start="00:41:02.491" data-end="00:41:06.691"><span title="41:02">haben wir den Server komplett weggelassen und entwickeln heute ausschließlich für</span> </span><span data-start="00:41:06.691" data-end="00:41:12.481"><span title="41:07">den Client, was viele von uns ärgert, warum wir, Andreas und ich, immer uns den Spaß machen,</span> </span><span data-start="00:41:12.995" data-end="00:41:17.298"><span title="41:13">ein Skript zu aktualisieren, das werdet ihr wiederfinden in den Repositories hierzu, womit,</span> </span><span data-start="00:41:17.931" data-end="00:41:21.664"><span title="41:18">man Winget auch auf dem Server installiert bekommt, einfach immer als Proof of Concept,</span> </span><span data-start="00:41:21.925" data-end="00:41:26.273"><span title="41:22">dass das geht und dass man sieht, Microsoft will das nicht, die können das nicht, die,</span> </span><span data-start="00:41:26.849" data-end="00:41:32.331"><span title="41:27">wollen das nicht. Und warum sie das nicht wollen, erklärt er in dem Interview. Aber der interessantere</span> </span><span data-start="00:41:32.331" data-end="00:41:36.301"><span title="41:32">Punkt ist, und Sie kennen sich ja natürlich so ein bisschen die Zeit davon, deswegen kommen wir</span> </span><span data-start="00:41:36.571" data-end="00:41:44.451"><span title="41:37">jetzt hier an der Stelle zum letzten Teil. Der interessantere Punkt ist, warum gibt es eigentlich</span> </span><span data-start="00:41:44.451" data-end="00:41:50.129"><span title="41:44">keine PowerShell-Commandlets? Dazu sagt er was, denn ja, es gibt sie mittlerweile. Aber jetzt,</span> </span><span data-start="00:41:50.971" data-end="00:41:55.771"><span title="41:51">müsst ihr genau zuhören, was er über die Qualität der PowerShell-Commandlets sagt. Und dann könnt</span> </span><span data-start="00:41:55.771" data-end="00:41:57.231"><span title="41:56">Wie viele Minuten wir noch haben, da kommen wir zum Ende.</span> </span><br>
+<span data-start="00:41:58.006" data-end="00:42:03.771"><span title="41:58">Das ist aber der Architektur geschuldet, muss man sagen.</span> <span title="42:01">Also das Winget läuft ja in einer virtuellen Blase.</span> </span><br>
+<span data-start="00:42:03.771" data-end="00:42:06.771"><span title="42:04">Das muss man sich überlegen. Das ist ja ein Universal Windows App,</span> </span><span data-start="00:42:06.771" data-end="00:42:09.691"><span title="42:07">läuft in einer virtuellen Blase, läuft in einem Container.</span> </span><br>
+<span data-start="00:42:10.276" data-end="00:42:13.589"><span title="42:10">Und das soll jetzt plötzlich über ein PowerShell gerappt werden.</span> </span><br>
+<span data-start="00:42:13.771" data-end="00:42:15.578"><span title="42:14">Also das ist das Problem dabei.</span> </span><br>
+<span data-start="00:42:16.073" data-end="00:42:18.306"><span title="42:16">Also deswegen auch überhaupt überkommen, das PowerShell Modul.</span> </span><br>
+<span data-start="00:42:18.771" data-end="00:42:22.681"><span title="42:19">Also ich will jetzt nicht zu viel erzählen,</span> <span title="42:21" style="background: rgba(209, 72, 54, 0.13);">Aber das wollte ich noch loswerden.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[42:25]</small> <span data-start="00:42:24.707" data-end="00:42:31.368"><span title="42:25" style="background: rgba(209, 72, 54, 0.15);">Wenn wir Glück haben, startet es an der richtigen Stelle.</span> <span title="42:27" style="background: rgba(209, 72, 54, 0.15);">Aber ich habe da so einen dicken Hals auch, wenn ich das ganze Thema da tiefer betrachte.</span> </span><br>
+<span data-start="00:42:33.150" data-end="00:42:38.273"><span title="42:33" style="background: rgba(209, 72, 54, 0.15);">Aus Ihrer Sicht, wie matur ist das PowerShell-Modul heute?</span> </span><br>
+<span data-start="00:42:38.624" data-end="00:42:40.650"><span title="42:39" style="background: rgba(209, 72, 54, 0.15);">Ich würde es fast alpha betrachten.</span> </span><br>
+<span data-start="00:42:41.883" data-end="00:42:50.345"><span title="42:42" style="background: rgba(209, 72, 54, 0.15);">Wir veröffentlichen es ohne die Prerelease-Flags.</span> <span title="42:46" style="background: rgba(209, 72, 54, 0.15);">Das ist, weil das DSC-Modul eine Abhängigkeit hat.</span> </span><br>
+<span data-start="00:42:50.696" data-end="00:42:54.612"><span title="42:51" style="background: rgba(209, 72, 54, 0.30);">Und wir konnten kein Prerelease-Package haben,</span> <span title="42:53" style="background: rgba(209, 72, 54, 0.30);">das auf ein anderes Prerelease-Package abhängig ist.</span> </span><br>
+<span data-start="00:42:55.071" data-end="00:43:00.697"><span title="42:55" style="background: rgba(209, 72, 54, 0.30);">Ich denke, es ist momentan 0.2.1</span> <span title="42:59" style="background: rgba(209, 72, 54, 0.30);">und wenn Sie sich mit Semantic Versioning</span> </span><span data-start="00:43:00.697" data-end="00:43:01.697"><span title="43:01" style="background: rgba(209, 72, 54, 0.30);">kennen, was ich hoffe, dass Sie es sind,</span> </span><span data-start="00:43:01.697" data-end="00:43:03.461"><span title="43:02" style="background: rgba(209, 72, 54, 0.30);">wenn nicht, dann gehen Sie zu Simver.org.</span> </span><br>
+<span data-start="00:43:03.697" data-end="00:43:09.358"><span title="43:04" style="background: rgba(209, 72, 54, 0.30);">Sie werden realisieren, dass,</span> <span title="43:06" style="background: rgba(209, 72, 54, 0.30);">seit wir mit einem 0 in der primären Position leiten,</span> </span><span data-start="00:43:10.303" data-end="00:43:12.023"><span title="43:10" style="background: rgba(209, 72, 54, 0.30);">das ist unstabiles Software.</span> </span><br>
+<span data-start="00:43:12.842" data-end="00:43:15.650"><span title="43:13" style="background: rgba(209, 72, 54, 0.30);">Es wird nicht so wichtig sein,</span> <span title="43:14" style="background: rgba(209, 72, 54, 0.30);">welche Versionen wir danach machen.</span> </span><br>
+
+
+<h2 id="chapter11" class="chapter">Herausforderungen bei Breaking Changes in der Entwicklung</h2>
+<br>
+
+<small style="opacity: 0.5;">[43:17]</small> <span data-start="00:43:16.821" data-end="00:43:18.997"><span title="43:17" style="background: rgba(209, 72, 54, 0.30);">Nach den Semantic Versioning-Versionen.</span> </span><br>
+<span data-start="00:43:19.152" data-end="00:43:23.266"><span title="43:19" style="background: rgba(209, 72, 54, 0.13);">I can make breaking changes in every single version that we ship.</span> </span><br>
+<span data-start="00:43:23.833" data-end="00:43:35.059"><span title="43:24" style="background: rgba(209, 72, 54, 0.13);">I would try not to do that as much as possible.</span> <span title="43:29" style="background: rgba(209, 72, 54, 0.13);">Because when you rename things or you add constraints that are breaking, that's really challenging.</span> </span><br>
+<span data-start="00:43:35.518" data-end="00:43:40.776"><span title="43:36" style="background: rgba(209, 72, 54, 0.13);">And it makes it harder for the consumers of that application from a dependency management standpoint.</span> </span><br>
+<span data-start="00:43:41.244" data-end="00:43:49.868"><span title="43:41" style="background: rgba(209, 72, 54, 0.13);">But what I'm really looking for is for people to tell me,</span> <span title="43:46" style="background: rgba(209, 72, 54, 0.27);">Ob wir die richtigen Namen auf den Namen und Verben und die Kommandos bekommen,</span> </span><span data-start="00:43:50.255" data-end="00:43:53.577"><span title="43:50" style="background: rgba(209, 72, 54, 0.27);">ob wir die richtigen Objekte bauen, damit die Dinge, die man erwartet,</span> </span><span data-start="00:43:54.108" data-end="00:43:57.079"><span title="43:54" style="background: rgba(209, 72, 54, 0.27);">die Pipe und Chaining-Dinge, so verhalten, wie man es erwartet.</span> </span><br>
+<span data-start="00:43:57.727" data-end="00:44:00.869"><span title="43:58" style="background: rgba(209, 72, 54, 0.27);">Und was wir gelernt haben, ist, bis wir es in die Galerie eingeschickt haben,</span> </span><span data-start="00:44:01.283" data-end="00:44:03.119"><span title="44:01" style="background: rgba(209, 72, 54, 0.27);">werden wir wirklich nicht viel Feedback bekommen.</span> </span><br>
+<span data-start="00:44:03.650" data-end="00:44:09.511"><span title="44:04" style="background: rgba(209, 72, 54, 0.27);">Auch wenn es die Komplexität und die Verwirrung gibt, dass wir es nicht vor der Veröffentlichung markieren,</span> </span><span data-start="00:44:10.105" data-end="00:44:13.715"><span title="44:10" style="background: rgba(209, 72, 54, 0.28);">Ich denke, wir bekommen den Vorteil, dass mehr Leute es benutzen und wir bekommen mehr Feedback.</span> </span><br>
+
+
+<h2 id="chapter12" class="chapter">Fragen zu Code-Beispielen und PowerShell</h2>
+<br>
+
+<small style="opacity: 0.5;">[44:40]</small> <span data-start="00:44:39.897" data-end="00:44:45.160"><span title="44:40">Die nächsten Vorträgen. Das müssen wir gleich beim kalten Getränk draußen klären, denn wir haben,</span> </span><span data-start="00:44:45.817" data-end="00:44:49.257"><span title="44:46">jetzt die Viertelstunde, die man uns geklaut hat, auch schon wieder hinter uns. Das heißt,</span> </span><span data-start="00:44:49.257" data-end="00:44:53.417"><span title="44:49">wir müssen jetzt hier zum Ende kommen. Ich habe natürlich eine Reihe von Code-Beispielen mit</span> </span><span data-start="00:44:53.417" data-end="00:44:58.017"><span title="44:53">gebracht zu der PowerShell. Die packe ich mit in das Repository. Wer dazu noch Fragen hat,</span> </span><span data-start="00:44:58.017" data-end="00:45:00.932"><span title="44:58">kann uns natürlich gleich beim Bier auch nochmal. Ich zeige das gerne, nur ich will jetzt den</span> </span><span data-start="00:45:01.337" data-end="00:45:04.983"><span title="45:01" style="background: rgba(209, 72, 54, 0.17);">nachfolgenden Sprecher hier nicht die Zeit klauen.</span> </span><br>
+<span data-start="00:45:04.605" data-end="00:45:10.924"><span title="45:05" style="background: rgba(209, 72, 54, 0.11);">Die Formulierung, it is barely alpha,</span> <span title="45:09" style="background: rgba(209, 72, 54, 0.11);">die ist wirklich nett formuliert.</span> </span><br>
+<span data-start="00:45:11.518" data-end="00:45:15.335"><span title="45:12" style="background: rgba(209, 72, 54, 0.11);">Dieses Modul ist im Moment so kaputt,</span> <span title="45:14" style="background: rgba(209, 72, 54, 0.11);">es läuft nicht mal unter Bauschell 5,</span> </span><span data-start="00:45:15.335" data-end="00:45:18.255"><span title="45:15" style="background: rgba(209, 72, 54, 0.11);">aber das ist kein Feature,</span> <span title="45:17" style="background: rgba(209, 72, 54, 0.11);">sondern es funktioniert einfach nicht.</span> </span><br>
+<span data-start="00:45:18.255" data-end="00:45:19.656"><span title="45:18" style="background: rgba(209, 72, 54, 0.11);">Da gibt es ein langes Issue im Moment für.</span> </span><br>
+<span data-start="00:45:20.764" data-end="00:45:25.255"><span title="45:21" style="background: rgba(209, 72, 54, 0.11);">Alleine die Benennung dieser Commandlets,</span> <span title="45:24" style="background: rgba(209, 72, 54, 0.11);">und da erzählt er ganz viel zu,</span> </span><span data-start="00:45:25.255" data-end="00:45:27.183"><span title="45:25" style="background: rgba(209, 72, 54, 0.11);">und ich kann das vollkommen nachvollziehen,</span> <span title="45:26" style="background: rgba(209, 72, 54, 0.11);">das ist ein Riesending.</span> </span><br>
+<span data-start="00:45:27.524" data-end="00:45:32.095"><span title="45:28" style="background: rgba(209, 72, 54, 0.11);">Du würdest ja zum Beispiel meinen,</span> <span title="45:29" style="background: rgba(209, 72, 54, 0.11);">dass ein Paket zu finden aus diesem Repository</span> </span><span data-start="00:45:32.095" data-end="00:45:33.259"><span title="45:32" style="background: rgba(209, 72, 54, 0.11);">ist so etwas wie Get Windows Package.</span> </span><br>
+<span data-start="00:45:34.312" data-end="00:45:38.417"><span title="45:34">Ja, weit gefehlt ist das Find-Windows-Package, aber es gibt ein Get-Windows-Package.</span> </span><br>
+<span data-start="00:45:39.975" data-end="00:45:44.395"><span title="45:40">Und bis man herausgefunden hat, wo die Unterschiede zwischen diesen Commandlets sind, dann entdeckt man auf einmal,</span> </span><span data-start="00:45:45.223" data-end="00:45:49.481"><span title="45:45">wie anspruchsvoll diese Idee der PowerShell für den Entwickler ist, nämlich Dinge einfach zu machen.</span> </span><br>
+<span data-start="00:45:50.525" data-end="00:45:54.999"><span title="45:51">Die richtigen Namen zu finden, wir lachen darüber, kann wirklich herausfordernd sein.</span> </span><br>
+<span data-start="00:45:55.467" data-end="00:45:59.680"><span title="45:55">Und der Ansatz von WinGet an der Kommandozeile mit diesen Subcommands ist dann natürlich ein vollkommen anderer.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[46:01]</small> <span data-start="00:46:01.391" data-end="00:46:08.055"><span title="46:01">Semantic Versioning, Semver.org, guckt es euch an und vergleicht das mit der Nummer von dem</span> </span><span data-start="00:46:08.055" data-end="00:46:14.015"><span title="46:08">Apple Stellar PowerShare Commandlets und ihr werdet wissen, was er damit meinte. Ja, wir sind</span> </span><span data-start="00:46:14.015" data-end="00:46:19.495"><span title="46:14">noch einmal zurück, hier auf dem Testsystem und jetzt in der gebotenen Kürze ganz gerne noch mal</span> </span><span data-start="00:46:19.495" data-end="00:46:24.375"><span title="46:20">ein paar interessante Neuerungen zeigen, damit das nicht so theoretisch bleibt. Ich habe ein</span> </span><span data-start="00:46:24.375" data-end="00:46:27.299"><span title="46:24" style="background: rgba(209, 72, 54, 0.23);">ein bisschen was mitgebracht. Versuch das jetzt mal.</span> </span><br>
+
+
+<h2 id="chapter13" class="chapter">Vorsicht bei der Verwendung von Winget in der ISE</h2>
+<br>
+
+<small style="opacity: 0.5;">[46:30]</small> <span data-start="00:46:30.081" data-end="00:46:36.131"><span title="46:30">Einmal kurz und effizient zu zeigen und ich starte noch mal, werde ein bisschen</span> </span><span data-start="00:46:36.131" data-end="00:46:39.251"><span title="46:36">wortbrüchig bei den Basics. Ich sagte ja, ich will mich ungern wiederholen, aber</span> </span><span data-start="00:46:39.251" data-end="00:46:44.011"><span title="46:39">vielleicht noch ein, zwei Bemerkungen vorneweg, damit das klar ist, falls jetzt</span> </span><span data-start="00:46:44.011" data-end="00:46:50.171"><span title="46:44">jemand in dem Thema noch nicht so drin ist. Punkt eins, man sollte vorsichtig</span> </span><span data-start="00:46:50.171" data-end="00:46:53.931"><span title="46:50">sein, wenn man Winget in der ISE benutzt. Das funktioniert nicht sauber, das</span> </span><span data-start="00:46:53.931" data-end="00:46:58.771"><span title="46:54">startet beim Encoding und geht dann darüber, dass wir immer dann mit Native</span> </span><span data-start="00:46:58.862" data-end="00:47:04.051"><span title="46:59">Probleme haben in der ISE, wenn die so einen interaktiven Modus haben, also Nachfragen stellen</span> </span><span data-start="00:47:04.051" data-end="00:47:10.491"><span title="47:04">etc. Ausnahmsweise kann man das hier mal machen, weil ich ja noch kein Visual Studio Code installiert</span> </span><span data-start="00:47:10.491" data-end="00:47:14.598"><span title="47:10">habe und das auf diese Art und Weise dann glaube ich hier in der Präsentation besser lesbar ist.</span> </span><br>
+<span data-start="00:47:15.075" data-end="00:47:23.411"><span title="47:15">Wenn man WinGad aktualisiert hat, das macht man über den Store, über die App Installer Software.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[47:24]</small> <span data-start="00:47:24.212" data-end="00:47:29.442"><span title="47:24">Dann sollte man das irgendwo im Dateisystem befinden und zwar ganz genau hier und man,</span> </span><span data-start="00:47:30.051" data-end="00:47:36.091"><span title="47:30">sieht das liegt im Benutzerprofil. Was daran jetzt interessant ist, ist dass wenn ich den Befehl hier</span> </span><span data-start="00:47:36.091" data-end="00:47:43.091"><span title="47:36">mal in einer neueren Version der PowerShell starte, dann sieht man mit ein bisschen Glück,</span> </span><span data-start="00:47:43.091" data-end="00:47:49.411"><span title="47:43">dass das ein sogenannter AppExec Alias ist, also eine Umleitung im Dateisystem, die von einem</span> </span><span data-start="00:47:49.411" data-end="00:47:57.457"><span title="47:49">benutzerbezogenen Pfad umleitet auf einen System Waltenpfad. Das sind genau die Kunstgriffe, die</span> </span><span data-start="00:47:57.891" data-end="00:48:02.931"><span title="47:58">über diese Store Applikationen dann eben möglich beziehungsweise notwendig sind und interessant ist,</span> </span><span data-start="00:48:02.931" data-end="00:48:07.324"><span title="48:03">dass man das hier in der PowerShell 703 auf eine sehr einfache Art und Weise sieht. Ich</span> </span><span data-start="00:48:07.691" data-end="00:48:09.899"><span title="48:08" style="background: rgba(209, 72, 54, 0.14);">Ich komme gleich dazu, dass das nicht immer so ist.</span> </span><br>
+
+
+<h2 id="chapter14" class="chapter">Programminstallationen ohne administrativen Zugriff möglich</h2>
+<br>
+
+<small style="opacity: 0.5;">[48:13]</small> <span data-start="00:48:12.932" data-end="00:48:17.602"><span title="48:13">Wenn man dann so ein Programm wie VSCode, wahrscheinlich eine der ersten Geschichten, die wir installieren,</span> </span><span data-start="00:48:17.685" data-end="00:48:24.602"><span title="48:18">wenn wir das uns dann hier dazu holen,</span> <span title="48:21">dann wird auch hier wieder sichtbar, dass es mittlerweile eine Reihe von Programmen gibt,</span> </span><span data-start="00:48:24.602" data-end="00:48:27.602"><span title="48:25">die keine administrativen Berechtigungen erfordern,</span> </span><span data-start="00:48:28.362" data-end="00:48:30.602"><span title="48:28">die das optional machen.</span> </span><br>
+<span data-start="00:48:30.602" data-end="00:48:34.340"><span title="48:31">Und wie man jetzt hier sehen wird, es wird die VSCode-Installation hier sauber durchlaufen.</span> </span><br>
+<span data-start="00:48:34.853" data-end="00:48:40.578"><span title="48:35">Der installiert sich per Default im User-Mode.</span> <span title="48:38">Kann man über Minus-Minus-Scope-Machine anpassen.</span> </span><br>
+<span data-start="00:48:41.109" data-end="00:48:44.442"><span title="48:41">Wenn man das als Parameter übergibt, dann wiederum bräuchte man natürlich Adminrecht.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[48:46]</small> <span data-start="00:48:45.935" data-end="00:48:51.642"><span title="48:46">Ich glaube wir glauben, dass das sauber funktioniert. Ich bleibe der Einfachheit</span> </span><span data-start="00:48:51.642" data-end="00:48:57.922"><span title="48:52">halber hier kurz in der Ise und zeige noch eine letzte Geschichte, die man unbedingt einrichten</span> </span><span data-start="00:48:57.922" data-end="00:49:04.642"><span title="48:58">sollte. Wenn man hier mit Wingate arbeitet, dann wäre es natürlich ganz schön, wenn man diese</span> </span><span data-start="00:49:04.642" data-end="00:49:10.922"><span title="49:05">Subcommands, diese Subcommands, wenn man die Auto vervollständigen könnte. So und ich versuche das</span> </span><span data-start="00:49:10.922" data-end="00:49:15.562"><span title="49:11">mal. Ich drücke den Tabulator. Müsst ihr mir jetzt glauben, dass ich das tue und ihr seht, da kommt</span> </span><span data-start="00:49:15.562" data-end="00:49:21.842"><span title="49:16">nichts. Das kann man aber sehr leicht ändern, indem man einfach einen Agilement Completer aktiviert.</span> </span><br>
+<span data-start="00:49:21.842" data-end="00:49:27.602"><span title="49:22">Das ist gut dokumentiert auf den Hilfeseiten von Vingert. Und wenn ich jetzt das nochmal wiederhole,</span> </span><span data-start="00:49:28.380" data-end="00:49:34.122"><span title="49:28">zweiter Versuch, dann seht ihr, das hat tatsächlich funktioniert. Und damit drückt die Arbeit in der</span> </span><span data-start="00:49:34.122" data-end="00:49:40.082"><span title="49:34">PowerShell mit einem Native Command doch schon sehr sehr nah ran an die Benutzererfahrung, an</span> </span><span data-start="00:49:40.082" data-end="00:49:44.682"><span title="49:40">den Komfort, den wir mit einem Commandlet verbinden, so dass wir Commandlets dann vielleicht nicht mehr</span> </span><span data-start="00:49:44.682" data-end="00:49:50.229"><span title="49:45">ganz so stark vermissen und uns ganz gut mit den Native Commands anfreunden können. Den,</span> </span><span data-start="00:49:51.426" data-end="00:49:55.842"><span title="49:51">Argument Completer kann man natürlich in Profilartei packen, brauche ich jetzt glaube ich nicht im</span> </span><span data-start="00:49:55.842" data-end="00:50:02.362"><span title="49:56">Detail zeigen und dann steht er einem immer zur Verfügung. Was dann eigentlich nur noch fehlt.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[50:04]</small> <span data-start="00:50:03.831" data-end="00:50:08.761"><span title="50:04">Die Rückgabe von Objekten, dass also Winget anstelle von Text uns strukturierte Daten</span> </span><span data-start="00:50:08.761" data-end="00:50:13.001"><span title="50:09">zurückgibt. Und diese Diskussion wird durchaus auch geführt. Ich habe auch das in meinem</span> </span><span data-start="00:50:13.001" data-end="00:50:18.881"><span title="50:13">Interview mit Dimitrius Mielen angesprochen. Und da rennt man offene Türen ein. Das ist</span> </span><span data-start="00:50:18.881" data-end="00:50:22.921"><span title="50:19">durchaus eine Idee, dass man dort zum Beispiel JSON-Dateien zurückgeben kann,</span> </span><span data-start="00:50:22.921" data-end="00:50:27.984"><span title="50:23">wie man sehr, sehr einfach in Objekte umwandeln kann. Schauen wir mal, was die Zukunft bringt.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[50:29]</small> <span data-start="00:50:29.128" data-end="00:50:34.921"><span title="50:29">Jetzt das erste was wirklich komplett neu ist das sogenannte pinning application pinning wozu dient</span> </span><span data-start="00:50:34.921" data-end="00:50:41.441"><span title="50:35">das es mag ja sein dass man vielleicht mal eine spezifische version einer applikation braucht ich</span> </span><span data-start="00:50:41.441" data-end="00:50:48.601"><span title="50:41">mache das hier mal mit der powershell 722 und vielleicht hat man nur eine lizenz für diese</span> </span><span data-start="00:50:48.601" data-end="00:50:54.761"><span title="50:49">variante oder es gibt irgendwelche sonstigen gründe kompatibilitätsgründe wenn wir jetzt mit</span> </span><span data-start="00:50:54.761" data-end="00:50:59.801"><span title="50:55" style="background: rgba(209, 72, 54, 0.11);">WinGetUpdates fährt, läuft man natürlich immer Gefahr, dass mit WinGetUpdate-All</span> </span><span data-start="00:50:59.801" data-end="00:51:05.401"><span title="51:00" style="background: rgba(209, 72, 54, 0.11);">das alle Anwendungen aktualisiert, wenn auch genau die, wo man ein Problem</span> </span><span data-start="00:51:05.401" data-end="00:51:09.481"><span title="51:05" style="background: rgba(209, 72, 54, 0.11);">damit hat. Hier sieht man jetzt sehr schön, diese Installation der PowerShell</span> </span><span data-start="00:51:09.481" data-end="00:51:14.561"><span title="51:09" style="background: rgba(209, 72, 54, 0.11);">braucht Admin-Rechte, deswegen hakt danach und jetzt gleich sollte dann neben der</span> </span><span data-start="00:51:14.561" data-end="00:51:23.564"><span title="51:15" style="background: rgba(209, 72, 54, 0.11);">Variante, die ich schon über Scoop installiert habe, noch eine neuere</span> <span title="51:18" style="background: rgba(209, 72, 54, 0.11);">PowerShell-Version kommen. Das gleiche, wir gucken uns das gleiche noch mal an.</span> </span><br>
+<span data-start="00:51:24.438" data-end="00:51:31.241"><span title="51:24">Stoße ich schon mal im Hintergrund an für die Powertoys. Auch hier kann man wieder gucken was</span> </span><span data-start="00:51:31.241" data-end="00:51:37.601"><span title="51:31">ist gerade aktuell 0.7.4 und wenn ich dann eine spezifische Version habe auch hier installiere</span> </span><span data-start="00:51:37.601" data-end="00:51:44.681"><span title="51:38">ich die mal während ich jetzt im Vordergrund eine Kleinigkeit zeigen will und zwar wir hatten ja</span> </span><span data-start="00:51:44.681" data-end="00:51:50.241"><span title="51:45">gerade die Geschichte hier mit dem App Execution Alias und ich hatte gezeigt dass wir dort,</span> </span><span data-start="00:51:52.228" data-end="00:51:54.241"><span title="51:52" style="background: rgba(209, 72, 54, 0.41);">dass wir dort.</span> </span><br>
+
+
+<h2 id="chapter15" class="chapter">Neue Version der PowerShell (7.2.2)</h2>
+<br>
+
+<small style="opacity: 0.5;">[51:57]</small> <span data-start="00:51:56.612" data-end="00:52:00.621"><span title="51:57" style="background: rgba(209, 72, 54, 0.15);">Sehen können worauf das zeigt. Ich hoffe jetzt mal diese neue Version der PowerShell hier auf,</span> </span><span data-start="00:52:01.743" data-end="00:52:07.501"><span title="52:02" style="background: rgba(209, 72, 54, 0.15);">und wir gucken mal rein. Das ist jetzt die Version 7.2.2</span> <span title="52:06" style="background: rgba(209, 72, 54, 0.15);">und wenn ich jetzt den Befehl hier fallen lasse,</span> </span><span data-start="00:52:09.053" data-end="00:52:14.741"><span title="52:09" style="background: rgba(209, 72, 54, 0.15);">Zweiter Versuch. Während im Hintergrund lustig die PowerToys installieren. Was immer der Erda so lange macht, finde ich auch spannend, aber gut,</span> </span><span data-start="00:52:15.940" data-end="00:52:17.587"><span title="52:16" style="background: rgba(209, 72, 54, 0.15);">Lassen wir ihn das im Hintergrund machen.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[52:20]</small> <span data-start="00:52:19.792" data-end="00:52:22.861"><span title="52:20" style="background: rgba(209, 72, 54, 0.15);">Und dann sieht man sehr schön, ich habe hier eine neuere Version der PowerShell,</span> </span><span data-start="00:52:23.573" data-end="00:52:28.381"><span title="52:24">eine aus der 7.2er Variante und die zeigt das nicht mehr an. Also das ist so eine kleine Anekdote,</span> </span><span data-start="00:52:29.290" data-end="00:52:35.981"><span title="52:29">wo ich mir denke, das ist relativ unschön. Der Hintergrund, ich hatte Steve Lee mal darauf</span> </span><span data-start="00:52:35.981" data-end="00:52:41.941"><span title="52:36">angesprochen, warum sie das wieder rausgenommen haben, ist so eine Mischung aus ungeklärte</span> </span><span data-start="00:52:41.941" data-end="00:52:47.021"><span title="52:42">Rechteverhältnisse der Bibliotheken, Private IPIs, naja und dann ist es halt so gewesen,</span> </span><span data-start="00:52:47.021" data-end="00:52:52.541"><span title="52:47">dass man in neueren Versionen der PowerShell dann diese Funktion zur Anzeige wieder rausgenommen</span> </span><span data-start="00:52:52.885" data-end="00:52:57.548"><span title="52:53">hat. Was natürlich unschön ist, weil hier so ein Pfeil zu haben, der dann ins Nichts zeigt, ist blöd.</span> </span><br>
+<span data-start="00:52:58.484" data-end="00:53:03.181"><span title="52:58">Aber damit sehen wir dann eben auch einmal mehr. Es gibt halt gute Gründe, warum man vielleicht</span> </span><span data-start="00:53:03.181" data-end="00:53:07.741"><span title="53:03">noch mal eine ältere Version braucht. Da bietet sich jetzt sowas wie Scoop natürlich wesentlich</span> </span><span data-start="00:53:08.107" data-end="00:53:14.541"><span title="53:08">besser an, weil man da Dinge entspannt parallel installieren kann. Weil genau dafür ist das</span> </span><span data-start="00:53:14.541" data-end="00:53:19.061"><span title="53:15">gemacht. So, jetzt kommen wir nochmal zurück. Die Powertoys sind mittlerweile auch installiert und</span> </span><span data-start="00:53:19.061" data-end="00:53:24.401"><span title="53:19">jetzt gucken wir uns mal an was heißt dieses pinning wenn ich jetzt hier unten einfach mal</span> </span><span data-start="00:53:24.401" data-end="00:53:26.427"><span title="53:24" style="background: rgba(209, 72, 54, 0.15);">schaue, welche Updates gibt es.</span> </span><br>
+
+
+<h2 id="chapter16" class="chapter">Anwendungen blockieren und PowerShell 7 Probleme</h2>
+<br>
+
+<small style="opacity: 0.5;">[53:29]</small> <span data-start="00:53:28.948" data-end="00:53:37.958"><span title="53:29">Dann sollten mir mehrere anwendungen gezeigt werden an der stelle und dann sieht man ok dafür</span> </span><span data-start="00:53:37.958" data-end="00:53:45.558"><span title="53:38">gibt es neue versionen und jetzt kann ich hingehen und kann sagen ok ich möchte ganz gerne dass das</span> </span><span data-start="00:53:45.558" data-end="00:53:51.038"><span title="53:46">hier geblockt wird und dann sieht man ok der hat das hier gefunden jetzt kann man mal in die pin</span> </span><span data-start="00:53:51.038" data-end="00:53:55.438"><span title="53:51">liste gucken ich hatte vorher da schon mal ein bisschen mit rum experimentiert und dann sieht</span> </span><span data-start="00:53:55.438" data-end="00:54:00.918"><span title="53:55">man ach ja guck mal hier da blockt er die PowerShell 7 das hat er jetzt offensichtlich noch nicht</span> </span><span data-start="00:54:00.918" data-end="00:54:10.678"><span title="54:01">angenommen oder noch mal ein achso jetzt weiß ich wo mein fehler ist ich hatte jetzt ausversehen die,</span> </span><span data-start="00:54:11.564" data-end="00:54:15.798"><span title="54:12">PowerShell geblockt und nicht die PowerToys ok so schnell kann man sich vertun aber egal und</span> </span><span data-start="00:54:15.798" data-end="00:54:23.718"><span title="54:16">sehen wir wenigstens worum es geht also ich hatte jetzt zwei applikationen in diese liste aufgenommen.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[54:25]</small> <span data-start="00:54:25.230" data-end="00:54:30.678"><span title="54:25">Und jetzt sieht man, diese beiden Elemente sind jetzt vor Updates geschützt. Wichtig dabei immer,</span> </span><span data-start="00:54:30.678" data-end="00:54:34.878"><span title="54:31">dass man hier Minus und Minus vorschreibt, damit er das auch wirklich berücksichtigt.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[54:36]</small> <span data-start="00:54:35.988" data-end="00:54:39.518"><span title="54:36">Wenn man jetzt ein Get-Update macht, dann sieht man, okay, hier wir haben noch ein Update oder</span> </span><span data-start="00:54:39.518" data-end="00:54:46.998"><span title="54:40">Upgrade und zwei weitere wären zwar auch Kandidaten, aber die haben wir jetzt geschützt mit diesem</span> </span><span data-start="00:54:46.998" data-end="00:54:52.358"><span title="54:47">sogenannten Pinning. Also eine sehr sinnvolle Zusatzgeschichte. Kommen wir zu dem eigentlich</span> </span><span data-start="00:54:52.358" data-end="00:54:58.358"><span title="54:52" style="background: rgba(209, 72, 54, 0.14);">interessanten teil nämlich zu dem kleinen module und das soll jetzt hier auch tatsächlich der</span> </span><span data-start="00:54:58.358" data-end="00:55:05.478"><span title="54:58" style="background: rgba(209, 72, 54, 0.14);">abschluss sein barely alpha haben wir gerade gehört also nach aussage von dem jps nielen</span> </span><span data-start="00:55:05.758" data-end="00:55:11.678"><span title="55:06" style="background: rgba(209, 72, 54, 0.14);">sollte man da ganz ganz ganz ganz vorsichtig sein die powercell version findet sich unter</span> </span><span data-start="00:55:11.678" data-end="00:55:19.598"><span title="55:12" style="background: rgba(209, 72, 54, 0.14);">dem schönen namen microsoft winget client und da es mehrere module gibt die sich mit dem thema</span> </span><span data-start="00:55:19.598" data-end="00:55:22.998"><span title="55:20">wenn geht beschäftigen muss man noch vorsichtig sein dass man aufs richtige erwischt haben schon</span> </span><span data-start="00:55:22.998" data-end="00:55:27.518"><span title="55:23">einige kollegen vorher erweiterungen geschrieben wenn ich das jetzt installiere</span> </span><span data-start="00:55:27.518" data-end="00:55:38.438"><span title="55:28">ich mache das hier zum ausprobieren mal ins benutzerprofil dann sehe ich hier okay da ist</span> </span><span data-start="00:55:38.438" data-end="00:55:42.678"><span title="55:38">was ich kann das versuchen zu importieren das sieht soweit ganz gut aus und ich habe eine</span> </span><span data-start="00:55:42.678" data-end="00:55:49.598"><span title="55:43">ganze reihe von neuen elementen so soweit ganz gut auf den ersten blick scheint das alles zu</span> </span><span data-start="00:55:49.598" data-end="00:55:56.718"><span title="55:50">funktionieren auch hier sehen wir sieht einigermaßen vertraut aus get win win get settings.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[55:58]</small> <span data-start="00:55:57.584" data-end="00:56:02.838"><span title="55:58">Find win get package das wirkt alles auf den ersten blick relativ logisch rufen wir mal ein</span> </span><span data-start="00:56:02.838" data-end="00:56:07.558"><span title="56:03">paar sachen auf und dann gehen wir mal hier zum beispiel in die settings hinein da muss man ein</span> </span><span data-start="00:56:07.558" data-end="00:56:09.467"><span title="56:08" style="background: rgba(209, 72, 54, 0.31);">ein bisschen aufpassen, weil...</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[56:12]</small> <span data-start="00:56:11.673" data-end="00:56:16.923"><span title="56:12" style="background: rgba(209, 72, 54, 0.13);">Bei den Windows-Winget-Settings gibt es einige administrative Geschichten, dazu gehört das.</span> </span><br>
+<span data-start="00:56:16.923" data-end="00:56:23.923"><span title="56:17" style="background: rgba(209, 72, 54, 0.13);">Da sieht man die Befehle an sich funktionieren, scheinen zu funktionieren, er sagt mir aber, er braucht Adminrechte dafür, okay, ignoriere ich das.</span> </span><br>
+<span data-start="00:56:24.069" data-end="00:56:34.923"><span title="56:24" style="background: rgba(209, 72, 54, 0.13);">Und dann gibt es noch natürlich die Möglichkeit, den aktuellen Stand aufzurufen und dagegen gibt es dann noch die User-Frontend-Einstellungen,</span> </span><span data-start="00:56:34.923" data-end="00:56:41.389"><span title="56:35">Also so Sachen wie, dass man zum Beispiel den Maschinen Scope als Default angeben möchte oder</span> </span><span data-start="00:56:41.803" data-end="00:56:48.123"><span title="56:42">dass man die Progressbar ein bisschen aufhübschen möchte und ähnliches mehr. Das ist sehr gut</span> </span><span data-start="00:56:48.123" data-end="00:56:53.563"><span title="56:48">dokumentiert auf dieser Webseite. Ich habe hier drüben nochmal so ein, zwei Beispiele mitgebracht.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[56:54]</small> <span data-start="00:56:54.200" data-end="00:57:00.723"><span title="56:54">Also hier würde man jetzt sehen, damit kann man die Einstellung beeinflussen. Wenn man das jetzt</span> </span><span data-start="00:57:00.723" data-end="00:57:06.603"><span title="57:01" style="background: rgba(209, 72, 54, 0.13);">ändern will alles was man tun muss ist dann hier auf der kleinen seite wenn der settings aufzurufen</span> </span><span data-start="00:57:06.603" data-end="00:57:12.123"><span title="57:07" style="background: rgba(209, 72, 54, 0.13);">das wäre der klassische befehl und dann kann man diese jason datei ändern wie öffnet sich jetzt</span> </span><span data-start="00:57:12.366" data-end="00:57:19.203"><span title="57:12" style="background: rgba(209, 72, 54, 0.13);">passenderweise direkt in versko kann die sachen da reinpacken aber ich wollte ja nicht so sehr</span> </span><span data-start="00:57:19.203" data-end="00:57:25.843"><span title="57:19" style="background: rgba(209, 72, 54, 0.13);">darauf gehen eingehen sondern ich wollte auf die pauschal modul eingehen also diese beiden</span> </span><span data-start="00:57:25.843" data-end="00:57:30.163"><span title="57:26" style="background: rgba(209, 72, 54, 0.12);">sachen bitte nicht verwechseln gucken wir mal an ob das denn auch mit der installiererei</span> </span><span data-start="00:57:30.163" data-end="00:57:39.043"><span title="57:30" style="background: rgba(209, 72, 54, 0.12);">funktioniert und da sehen wir jetzt wenn ich das aufrufe einige befehle funktionieren andere</span> </span><span data-start="00:57:39.043" data-end="00:57:46.803"><span title="57:39" style="background: rgba(209, 72, 54, 0.12);">befehle funktionieren wieder nicht fragt man sich natürlich ok also das wind an sich funktioniert</span> </span><span data-start="00:57:46.803" data-end="00:57:52.354"><span title="57:47" style="background: rgba(209, 72, 54, 0.12);">aber was ist hiermit feindling package ja wenn man das ein bisschen recherchiert lernt man es.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[57:54]</small> <span data-start="00:57:53.723" data-end="00:58:01.723"><span title="57:54" style="background: rgba(209, 72, 54, 0.12);">Gibt da ein problem und zwar ich kopiere das mal eben rüber und zwar lernt man wenn man ein bisschen</span> </span><span data-start="00:58:01.723" data-end="00:58:09.003"><span title="58:02" style="background: rgba(209, 72, 54, 0.12);">recherchiert dass es mit der aktuellen version von windgate ein paar kompatibilität probleme</span> </span><span data-start="00:58:09.003" data-end="00:58:14.803"><span title="58:09" style="background: rgba(209, 72, 54, 0.12);">gibt das heißt ich rufe jetzt mal diesen befehl der da gerade nicht funktioniert hat in der neuen</span> </span><span data-start="00:58:14.803" data-end="00:58:22.563"><span title="58:15" style="background: rgba(209, 72, 54, 0.12);">version auf und dann sieht man also hier scheint das zu funktionieren zweiter befehl geht winget,</span> </span><span data-start="00:58:23.205" data-end="00:58:31.203"><span title="58:23">Package suchen wir mal nach VSCode. Okay das scheint soweit zu funktionieren. Also um es kurz zu</span> </span><span data-start="00:58:31.203" data-end="00:58:46.283"><span title="58:31">machen nehmen wir noch mal das hier als weiteres Beispiel und schließen das ganze ab. Also hier</span> </span><span data-start="00:58:46.283" data-end="00:58:52.408"><span title="58:46">sieht man dann sowas wie Vivaldi und natürlich will man das dann auch installieren über die</span> <span title="58:52" style="background: rgba(209, 72, 54, 0.42);">Pipeline.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[58:55]</small> <span data-start="00:58:54.704" data-end="00:58:59.554"><span title="58:55">Und auch das mache ich wieder im User-Scope. Das wäre so meine Erwartung, wie das Ganze funktioniert.</span> </span><br>
+<span data-start="00:58:59.844" data-end="00:59:05.554"><span title="59:00">Vorsichtig muss man hier sein mit so Verben wie find und get. Da kann man sich schnell verlaufen,</span> </span><span data-start="00:59:05.554" data-end="00:59:09.554"><span title="59:06">aber das wird sich am Ende des Tages finden mit ein bisschen Erfahrung.</span> </span><br>
+<span data-start="00:59:09.554" data-end="00:59:15.554"><span title="59:10">Entscheidend ist, dass man hier an sehr, sehr, sehr, sehr vielen Stellen merkt.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[59:16]</small> <span data-start="00:59:16.462" data-end="00:59:21.554"><span title="59:16">Wie unfertig diese Commandlets sind. Und alleine die Tatsache, das ist jetzt sicherlich nur eine Momentaufnahme,</span> </span><span data-start="00:59:21.554" data-end="00:59:27.354"><span title="59:22">dass es im Moment nicht PowerShell 5 kompatibel ist. Übrigens auch mit PowerShell 7.1 habe ich</span> </span><span data-start="00:59:27.354" data-end="00:59:32.434"><span title="59:27">das auch nicht ans Laufen gebracht. Also wirklich nur mit den neueren Versionen der PowerShell 7</span> </span><span data-start="00:59:32.434" data-end="00:59:38.635"><span title="59:32">funktioniert. Das ist sicherlich keine Absicht, sondern man sieht, das ist Work in Progress. Und,</span> </span><span data-start="00:59:39.194" data-end="00:59:43.994"><span title="59:39">was ich mir natürlich am Ende des Tages wirklich wünsche, wir sehen Vivaldi als Browser ist</span> </span><span data-start="00:59:43.994" data-end="00:59:52.734"><span title="59:44" style="background: rgba(209, 72, 54, 0.10);">installiert und das soll dann hier jetzt auch das letzte das letzte sein was ich mir natürlich</span> </span><span data-start="00:59:52.734" data-end="00:59:58.334"><span title="59:53" style="background: rgba(209, 72, 54, 0.10);">wünsche ist gar nicht so viel weil wenn geht an der kommandozeile mit dem argument computer</span> </span><span data-start="00:59:58.334" data-end="01:00:03.214"><span title="59:58" style="background: rgba(209, 72, 54, 0.10);">funktioniert wunderbar aber sie mir natürlich auf jeden fall wünschen würde ist dass sowas</span> </span><span data-start="01:00:03.214" data-end="01:00:07.614"><span title="1:00:03" style="background: rgba(209, 72, 54, 0.10);">hier funktioniert dass ich das ganze an auch radio weiter schicken kann und kann mir dann</span> </span><span data-start="01:00:07.614" data-end="01:00:14.254"><span title="1:00:08">irgendwelche beliebigen Browser installieren, auf die ich Lust habe und dann hier einfach sagen</span> </span><span data-start="01:00:14.254" data-end="01:00:21.374"><span title="1:00:14">ok und auf diese Art und Weise mit dem magischen Einzeiler kann ich dann, so wie ich das in der</span> </span><span data-start="01:00:21.374" data-end="01:00:25.447"><span title="1:00:21">PowerShell erwarte, über die Pipeline x beliebig viele Browser Erweiterungen installieren. Also.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[1:00:28]</small> <span data-start="01:00:27.769" data-end="01:00:32.415"><span title="1:00:28">Das soll es gewesen sein als kurzes Schmankerl. Alle Codebeispiele landen wie gehabt, wie</span> </span><span data-start="01:00:32.734" data-end="01:00:36.897"><span title="1:00:33">angekündigt in den Repository zu dem Vortrag.</span> </span><br>
+
+
+<h2 id="chapter17" class="chapter">Abschließende Worte über den userzentrierten Ansatz</h2>
+<br>
+
+<small style="opacity: 0.5;">[1:00:39]</small> <span data-start="01:00:39.283" data-end="01:00:48.133"><span title="1:00:39">Ja, und abschließend, ich glaube, und den Rest fähren wir dann beim Kaltgetränk, aber Andrea sollte auch noch ein abschließendes Wort sagen.</span> </span><br>
+<span data-start="01:00:49.014" data-end="01:00:56.091"><span title="1:00:49">Ich glaube, woran wir uns wirklich gewöhnen müssen ist dieses Widewidewitt, ich mache mir die Welt, wie sie mir gefällt.</span> </span><br>
+<span data-start="01:00:56.945" data-end="01:01:00.133"><span title="1:00:57">Ich glaube, wir müssen Realist sein, gegen die Hersteller kommen wir nicht an.</span> </span><br>
+<span data-start="01:01:00.133" data-end="01:01:05.133"><span title="1:01:00">Und die Welt hat eindeutig, ganz offenkundig den userzentrierten Ansatz im Fokus.</span> </span><br>
+<span data-start="01:01:05.696" data-end="01:01:09.144"><span title="1:01:06">Das heißt, wenn wir jetzt über Package-Management reden, dann können wir natürlich beklagen,</span> </span><span data-start="01:01:09.853" data-end="01:01:14.053"><span title="1:01:10">dass Wingate viele von den Sachen, die wir gerne hätten, nicht implementiert.</span> </span><br>
+<span data-start="01:01:14.053" data-end="01:01:17.653"><span title="1:01:14">Dafür können wir Store-Anwendungen bereitstellen, die euch alle nicht interessieren, wenn ihr</span> </span><span data-start="01:01:17.653" data-end="01:01:18.299"><span title="1:01:18">den Store alle abschaltet.</span> </span><br>
+<span data-start="01:01:19.226" data-end="01:01:21.999"><span title="1:01:19">Aber mein Schlusspunkt wäre, darüber solltet ihr noch mal nachdenken.</span> </span><br>
+<span data-start="01:01:22.710" data-end="01:01:25.267"><span title="1:01:23">Also sich auf diese neue Welt einlassen und dann überlegen, was passt.</span> </span><br>
+<span data-start="01:01:25.773" data-end="01:01:29.173"><span title="1:01:26">Und vielleicht ist dann MSIX oder so die bessere Plane.</span> <span title="1:01:28">Ja, also definitiv.</span> </span><br>
+<span data-start="01:01:29.173" data-end="01:01:33.387"><span title="1:01:29">Also ich finde den nutzerbasierenden Ansatz immer besser.</span> <span title="1:01:32">Da gibt es ganz viele verschiedene Gründe dafür.</span> </span><br>
+<span data-start="01:01:34.071" data-end="01:01:38.693"><span title="1:01:34">Zumindest wenn es richtig gemacht wird und auch wenn es richtig implementiert wird in der eigenen Umgebung.</span> </span><br>
+<span data-start="01:01:39.121" data-end="01:01:42.371"><span title="1:01:39">Und da kommt heute auch nach wie vor ganz, ganz stark PowerShell ins Spiel,</span> </span><span data-start="01:01:43.244" data-end="01:01:45.387"><span title="1:01:43">weil es bestimmte Werkzeuge einfach nicht gibt, die das so können.</span> </span><br>
+<span data-start="01:01:46.098" data-end="01:01:51.481"><span title="1:01:46">Das heißt, man muss zumindest, wenn man MSRX einsetzen will, aktuell sehr viel drumherum skripten.</span> </span><br>
+<span data-start="01:01:52.408" data-end="01:01:56.586"><span title="1:01:52">Und die Infrastruktur für App-V, zumindest die Infrastruktur für App-V, wird 2026 wegfallen.</span> </span><br>
+<span data-start="01:01:56.721" data-end="01:01:58.386"><span title="1:01:57">Das wird also noch ein spannendes Thema.</span> </span><br>
+<br>
+
+<small style="opacity: 0.5;">[1:01:59]</small> <span data-start="01:01:59.376" data-end="01:02:04.093"><span title="1:01:59" style="background: rgba(209, 72, 54, 0.12);">Ansonsten, wer da Fragen zu hat, ich stehe heute natürlich auch gern noch bereit.</span> </span><br>
+<span data-start="01:02:04.093" data-end="01:02:07.293"><span title="1:02:04" style="background: rgba(209, 72, 54, 0.12);">Also ich werde auch bis zum Grillen bleiben, beantworte ich gern.</span> </span><br>
+<span data-start="01:02:07.370" data-end="01:02:10.647"><span title="1:02:07" style="background: rgba(209, 72, 54, 0.12);">Und auf jeden Fall vielen Dank von meiner Seite für die Aufmerksamkeit.</span> </span><br>
+<span data-start="01:02:11.043" data-end="01:02:14.887"><span title="1:02:11" style="background: rgba(209, 72, 54, 0.12);">Und der Link, muss man noch mal sagen, zu Raimund ist, ich habe es gerade schon angedeutet,</span> </span><span data-start="01:02:15.832" data-end="01:02:25.133"><span title="1:02:16" style="background: rgba(209, 72, 54, 0.12);">es gibt jetzt das letzte heiße Ding,</span> <span title="1:02:20" style="background: rgba(209, 72, 54, 0.12);">DSC und Winged wird verheiratet im Kontext von Intune und Ähnlichem.</span> </span><br>
+<span data-start="01:02:25.133" data-end="01:02:28.571"><span title="1:02:25" style="background: rgba(209, 72, 54, 0.21);">Könnte das sehr, sehr, sehr, sehr interessant werden und darüber können wir dann nachher,</span> </span><span data-start="01:02:30.173" data-end="01:02:37.924"><span title="1:02:30" style="background: rgba(209, 72, 54, 0.32);">noch mal drüber gehen. Vielen lieben Dank!</span> </span>
+<br>
+</div>
+
+
+<script type="text/javascript">
+
+function getBgAlpha(element) {
+    var currentColor = getComputedStyle(element).getPropertyValue('background-color');
+    var parts = currentColor.match(/[\d.]+/g);
+    var alpha = "0"
+
+    try {
+        alpha = parts[3];
+    }
+    catch(err) {
+        // on edge we don't get a color if RGBA is completely 0
+    }
+
+    return alpha;
+}
+
+function removeStyling() {
+    var elements = document.getElementsByTagName('span');
+    var newColorBase = 'rgba(255, 255, 255, ';
+    for (var i=0; i<elements.length; i++) {
+        var currentAlpha = getBgAlpha(elements[i]);
+        var newColor = newColorBase + currentAlpha + ')';
+        elements[i].style = 'background: ' + newColor + ';';
+    }
+
+    try {
+        var button = document.getElementById('toggle-styling');
+        button.innerText = 'Add Highlighting';
+        button.onclick = function() { addStyling(); } ;
+    }
+    catch(err) {
+        // no confidence available
+    }
+}
+
+function addStyling() {
+    var elements = document.getElementsByTagName('span');
+    var newColorBase = 'rgba(209, 72, 54, ';
+    for (var i=0; i<elements.length; i++) {
+        var currentAlpha = getBgAlpha(elements[i]);
+        var newColor = newColorBase + currentAlpha + ')';
+        elements[i].style = 'background: ' + newColor + ';';
+    }
+
+    try {
+        var button = document.getElementById('toggle-styling');
+        button.innerText = 'Remove Highlighting';
+        button.onclick = function() { removeStyling(); } ;
+    }
+    catch(err) {
+        // no confidence available
+    }
+}
+
+function enableEdit() {
+    var transcript = document.getElementById('transcript');
+    transcript.contentEditable = true;
+    transcript.classList.add("edit-mode");
+
+    var button = document.getElementById('edit-transcript');
+    button.innerText = 'Close Edit Mode';
+    button.onclick = function() { disableEdit(); } ;
+
+    RENAME_SPEAKERS = true;
+    activateRenameSpeaker();
+}
+
+function addSpeakerChangeTooltip() {
+    var elements = document.querySelectorAll('b[data-spk]');
+    for (var i=0; i<elements.length; i++) {
+        elements[i].title = 'Change speaker name to edit all speakers at once!';
+    }
+}
+
+function removeSpeakerChangeTooltip() {
+    var elements = document.querySelectorAll('b[data-spk]');
+    for (var i=0; i<elements.length; i++) {
+        elements[i].title = '';
+    }
+}
+
+function disableEdit() {
+    document.getElementById('toggle-rename-speaker').style = 'display: none;';
+
+    var transcript = document.getElementById('transcript');
+    transcript.contentEditable = false;
+    transcript.classList.remove("edit-mode");
+
+    var button = document.getElementById('edit-transcript');
+    button.innerText = 'Edit Transcript';
+    button.onclick = function() { enableEdit(); } ;
+
+    removeSpeakerChangeTooltip();
+}
+
+function removeSpans(transcript) {
+    var removeSpans = new RegExp('</?span[^>]*>','gm');
+    transcript = transcript.replace(removeSpans, '');
+    transcript = transcript.replace(/&nbsp;/g, ' ');
+    return transcript;
+}
+
+function showExportButtons() {
+    var button = document.getElementById('show-export-buttons');
+    button.innerText = '>';
+    button.title = 'Close export buttons.';
+    button.classList.add("export-buttons-shown");
+    button.onclick = function() { hideExportButtons(); } ;
+
+    document.getElementById('export-html').style = '';
+    document.getElementById('export-pdf').style = '';
+    document.getElementById('export-webvtt').style = '';
+    document.getElementById('save-changes').style = '';
+    document.getElementById('show-help').style = 'display: none;';
+}
+
+function hideExportButtons() {
+    var button = document.getElementById('show-export-buttons');
+    button.innerText = 'Export...';
+    button.title = '';
+    button.classList.remove("export-buttons-shown");
+    button.onclick = function() { showExportButtons(); } ;
+
+    document.getElementById('export-html').style = 'display: none;';
+    document.getElementById('export-pdf').style = 'display: none;';
+    document.getElementById('export-webvtt').style = 'display: none;';
+    document.getElementById('save-changes').style = 'display: none;';
+    document.getElementById('show-help').style = '';
+}
+
+function saveChanges() {
+    disableEdit();
+    hideExportButtons();
+
+    var head = document.head.innerHTML;
+    var body = document.body.innerHTML;
+
+    var pageSource = '<!DOCTYPE html><html><head>' + head + '</head><body>' + body + '</body></html>';
+    var filename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
+
+    var bl = new Blob([pageSource], {type: "text/html"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(bl);
+    a.download = filename;
+    a.hidden = true;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
+
+function exportHTML() {
+    disableEdit();
+    removeStyling();
+
+    var head = document.head.innerHTML;
+    var metadata = document.getElementById('metadata').innerHTML;
+    var transcript = document.getElementById('transcript').innerHTML;
+
+    transcript = removeSpans(transcript);
+
+
+    var shownotesElement = document.getElementById('shownotes');
+    if (shownotesElement === null) {
+        var pageSource = '<!DOCTYPE html><html><head>' + head + '</head><body>' + metadata + '<div class="transcript-base">' + transcript + '</div></body></html>';
+    } else {
+        shownotes = shownotesElement.innerHTML;
+        var pageSource = '<!DOCTYPE html><html><head>' + head + '</head><body>' + metadata + '<div id="shownotes">' + shownotes + '</div>' + '<div class="transcript-base">' + transcript + '</div></body></html>';
+    }
+    var filename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
+
+    var bl = new Blob([pageSource], {type: "text/html"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(bl);
+    a.download = filename;
+    a.hidden = true;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    hideExportButtons();
+}
+
+function exportWebVTT() {
+    disableEdit();
+
+    var pageSource = 'WEBVTT\n\n';
+
+    var segments = document.querySelectorAll('span[data-start]');
+    for (var i=0; i<segments.length; i++) {
+        pageSource += segments[i].getAttribute('data-start') + ' --> ';
+        pageSource += segments[i].getAttribute('data-end') + '\n';
+        if (segments[i].getAttribute('data-spk') !== null) {
+            pageSource += '<v ' + segments[i].getAttribute('data-label') + '>';
+        }
+        pageSource += removeSpans(segments[i].innerHTML);
+        pageSource += '\n\n';
+    }
+
+    var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+    filename = filename.substring(0, filename.lastIndexOf('.')) + '.vtt';
+
+    var bl = new Blob([pageSource], {type: 'text/vtt'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(bl);
+    a.download = filename;
+    a.hidden = true;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    hideExportButtons();
+}
+
+function getSecondsFromString(timeString) {
+    var splitStrg = timeString.split(":");
+    var seconds = 0;
+    for (var i=0; i<splitStrg.length; i++) {
+        if (i == 0) { seconds += parseInt(splitStrg[splitStrg.length - 1]); }
+        if (i == 1) { seconds += parseInt(splitStrg[splitStrg.length - 2]) * 60; }
+        if (i == 2) { seconds += parseInt(splitStrg[splitStrg.length - 3]) * 3600; }
+    }
+    return seconds;
+}
+
+function pad(num, size) {
+    var s = num + "";
+    while (s.length < size) s = "0" + s;
+    return s;
+}
+
+function secToTimeString(seconds) {
+    var ss = Math.round(seconds);
+    var cmin = Math.floor(ss / 60);
+    var csec = ss % 60;
+
+    if (cmin < 60) {
+        return cmin + ":" + pad(csec, 2);
+    } else {
+        var ch = Math.floor(cmin / 60);
+        var cm = cmin % 60;
+        return ch + ":" + pad(cm, 2) + ":" + pad(csec, 2);
+    }
+}
+
+function removeActiveClass() {
+    var elements = document.querySelectorAll('span.active');
+    for (var i=0; i<elements.length; i++) {
+        elements[i].classList.remove("active");
+        // elements[i].classList.add("listened");
+    }
+}
+
+function addAudioFile() {
+    var txt;
+    var url = prompt(
+        'Please enter complete URL for the audio file, which should be played along the transcript\n(a local path should start with "file:///"):',
+        'https://auphonic.com/media/audio-examples/03.auphonic-demo-denoise-100.m4a'
+    );
+    if (url == null || url == "") { return; }
+
+    var audio = document.getElementById('audio-player');
+    var oldSources = document.querySelectorAll('source');
+    for (var i=0; i<oldSources.length; i++) {
+        oldSources[i].remove();
+    }
+
+    var source = document.createElement('source');
+    source.src = url;
+    audio.appendChild(source);
+
+    addAudioPlayer();
+}
+
+function addAudioPlayer() {
+    var audio = document.getElementById('audio-player');
+
+    document.getElementById('add-audio-file').style = '';
+    document.getElementById('toggle-play-on-click').style = 'display: none;';
+
+    audio.oncanplay = function() {
+        AUDIO_PLAYER = audio;
+
+        // highlight current audio segment
+        if (HAVE_TIMESTAMPS) {
+            AUDIO_PLAYER.ontimeupdate = function() {
+                if (ARE_PLAYING) {
+                    var curTime = secToTimeString(AUDIO_PLAYER.currentTime);
+                    elements = document.querySelectorAll('span[title="' + curTime + '"]');
+                    if (elements.length > 0) {
+                        removeActiveClass();
+                        for (var i=0; i<elements.length; i++) {
+                            elements[i].classList.add("active");
+                        }
+                    }
+                }
+            };
+        }
+
+        // setup click handlers to play audio on mouse click
+        if (HAVE_TIMESTAMPS) {
+            var elements = document.getElementsByTagName('span');
+            for (var i=0; i<elements.length; i++) {
+                if (elements[i].getAttribute('data-start') === null) {  // no data-start attribute
+                    try {
+                        elements[i].removeEventListener("click", clickHandlerTimestamp);
+                    } catch(err) { }
+                    elements[i].addEventListener("click", clickHandlerTimestamp);
+                }
+            }
+        } else {
+            var elements = document.querySelectorAll('span[data-start]');
+            for (var i=0; i<elements.length; i++) {
+                try {
+                    elements[i].removeEventListener("click", clickHandlerSegment);
+                } catch(err) { }
+                elements[i].addEventListener("click", clickHandlerSegment);
+            }
+        }
+
+        enableAudioClickPlayback();
+
+        var button = document.getElementById('add-audio-file');
+        button.style = "display: none;";
+    }
+
+    audio.load();
+}
+
+function clickHandlerTimestamp(e) {
+    var target = (e.target) ? e.target : e.srcElement;
+    if (PLAY_WHOLE_SEGMENT) {
+        startSeconds = getSecondsFromString(target.getAttribute("title")) - 0.4
+        playWholeSegment(target.parentElement, startSeconds);
+    } else {
+        var timeString = target.title;
+        var timeSec = getSecondsFromString(timeString);
+        playAudioSegment(timeSec -0.6, timeSec + 3.4);
+    }
+}
+
+function playWholeSegment(e, startSeconds = null) {
+    var startTimeStrg = e.getAttribute("data-start").split(".")[0];
+    var endTimeStrg = e.getAttribute("data-end").split(".")[0];
+    var startSec = (startSeconds) ? startSeconds : getSecondsFromString(startTimeStrg);
+    var endSec = getSecondsFromString(endTimeStrg) + 1;
+    playAudioSegment(startSec, endSec);
+}
+
+function clickHandlerSegment(e) {
+    if (PLAYBACK_ON_CLICK) {
+        var target = (e.target) ? e.target : e.srcElement;
+        removeActiveClass();
+        target.classList.add("active");
+        playWholeSegment(target)
+    }
+}
+
+function enableAudioClickPlayback() {
+    var button = document.getElementById('toggle-play-on-click');
+    button.innerText = 'Stop Play-on-click';
+    button.style = "";
+    button.onclick = function() { disableAudioClickPlayback(); } ;
+    PLAYBACK_ON_CLICK = true;
+}
+
+function disableAudioClickPlayback() {
+    AUDIO_PLAYER.pause();
+    ARE_PLAYING = false;
+    removeActiveClass();
+    var button = document.getElementById('toggle-play-on-click');
+    button.innerText = 'Activate Play-on-click';
+    button.style = "";
+    button.onclick = function() { enableAudioClickPlayback(); } ;
+    PLAYBACK_ON_CLICK = false;
+}
+
+function playAudioSegment(start_sec, end_sec) {
+    if (AUDIO_PLAYER !== null && PLAYBACK_ON_CLICK) {
+        if (PAUSE_TIMEOUT !== null) { clearTimeout(PAUSE_TIMEOUT); }
+
+        AUDIO_PLAYER.currentTime = start_sec;
+        AUDIO_PLAYER.play();
+        ARE_PLAYING = true;
+
+        var length_ms = (end_sec - start_sec) * 1000;
+        PAUSE_TIMEOUT= setTimeout(function(){
+            AUDIO_PLAYER.pause();
+            PAUSE_TIMEOUT = null;
+            ARE_PLAYING = false;
+            removeActiveClass();
+        }, length_ms);
+    }
+}
+
+function activateRenameSpeaker() {
+    var button = document.getElementById('toggle-rename-speaker');
+    button.style = '';
+    button.innerText = 'Edit Speaker';
+    addSpeakerChangeTooltip();
+}
+
+function toggleRenameSpeaker() {
+    RENAME_SPEAKERS = !RENAME_SPEAKERS;
+    if (RENAME_SPEAKERS) {
+        activateRenameSpeaker();
+    } else {
+        var button = document.getElementById('toggle-rename-speaker');
+        button.innerText = 'Rename Speaker';
+        removeSpeakerChangeTooltip();
+    }
+}
+
+function setupTranscriptChangeListeners() {
+    var trans = document.getElementById('transcript');
+    trans.addEventListener("keyup", function(e){
+        var editedNode = window.getSelection().anchorNode.parentNode;
+
+        // set background of already edited spans back to white
+        if (HAVE_TIMESTAMPS && HAVE_CONFIDENCE) {
+            var clearNode = editedNode;
+            if (clearNode.tagName == "SPAN") {
+                if (clearNode.getAttribute("data-start") !== null) {
+                    // if we click into the parent span, we have to get the next node!
+                    clearNode = window.getSelection().anchorNode.nextSibling;
+                }
+                if (clearNode.tagName == "SPAN" && clearNode.getAttribute("title") !== null) {
+                    clearNode.style = 'background: white;';
+                }
+            }
+        }
+
+        if (RENAME_SPEAKERS) {
+            // change all speaker names if we change one speaker
+            if (editedNode.tagName == "B" && editedNode.getAttribute("data-spk") !== null) {
+                var curSpeaker = editedNode.getAttribute("data-spk");
+
+                var elements = document.querySelectorAll('b[data-spk="' + curSpeaker + '"]');
+                for (var i=0; i<elements.length; i++) {
+                    if (elements[i] !== editedNode) {
+                        elements[i].innerText = editedNode.innerText;
+                    }
+                }
+
+                // for WebVTT export
+                var elements = document.querySelectorAll('span[data-spk="' + curSpeaker + '"]');
+                var label = editedNode.innerText;
+                if (label[label.length -1] == ":") {
+                    label = label.substring(0, label.length - 1);
+                }
+                for (var i=0; i<elements.length; i++) {
+                    elements[i].setAttribute("data-label", label);
+                }
+            }
+        } else {
+            // set data-spk of this speaker so it is not renamed if RENAME_SPEAKERS is True
+            editedNode.setAttribute("data-spk", editedNode.innerText);
+
+            // set data-spk and data-label for all texts of this speaker
+            speakerNodeName = editedNode.nodeName;
+            nextNode = editedNode.nextElementSibling;
+            while (nextNode && nextNode.nodeName != speakerNodeName) {
+                if (nextNode.hasAttribute("data-label") && nextNode.hasAttribute("data-spk")) {
+                    nextNode.setAttribute("data-spk", editedNode.innerText);
+                    nextNode.setAttribute("data-label", editedNode.innerText);
+                }
+                nextNode = nextNode.nextElementSibling;
+            }
+        }
+    });
+}
+
+HAVE_CONFIDENCE = true;
+HAVE_TIMESTAMPS = HAVE_CONFIDENCE;  // for now ...
+PLAY_WHOLE_SEGMENT = true;
+RENAME_SPEAKERS = true;
+
+AUDIO_PLAYER = null;
+PAUSE_TIMEOUT = null;
+PLAYBACK_ON_CLICK = false;
+ARE_PLAYING = false;
+
+window.addEventListener("load", function(){
+    if(!HAVE_CONFIDENCE) {
+        var button = document.getElementById('toggle-styling');
+        if (button !== null) { button.remove(); }
+    }
+
+    addAudioPlayer();
+    setupTranscriptChangeListeners();
+});
+</script>
+
+
+</body>
+</html>
