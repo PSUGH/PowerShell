@@ -1,0 +1,77 @@
+From: "Marco Kleinert" <Marco.Kleinert@netz-weise.de>
+Subject: URGENT: Multi-Factor Authentication (MFA) Required for Account Security
+Date: Wed, 19 Feb 2025 16:19:50 +0000
+Message-Id: <em36b00318-aaea-47e3-b574-653afa3e721c@823b14ca.com>
+Reply-To: "Marco Kleinert" <Marco.Kleinert@netz-weise.de>
+User-Agent: eM_Client/10.1.4588.0
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="------=_MB7E3587B8-AE76-473E-BF57-A1B36E0D30A8"
+
+--------=_MB7E3587B8-AE76-473E-BF57-A1B36E0D30A8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+
+--- From: "Microsoft Security Team" <noreply@microsoft-support[.]xyz>=20
+(spoofed domain)
+
+Body:
+
+Dear Valued User,
+
+We detected unusual login activity from an unrecognized device at 3:12=20
+PM EST attempting to access your account john.doe@yourcompany.com. To=20
+protect your account, we require immediate verification.
+
+Action Required:
+
+Click below to initiate MFA verification:
+=E2=9E=A1=EF=B8=8F Verify Account Now (malicious link)
+
+Enter the following 6-digit security code on the next page:
+CODE: 451872
+
+Failure to complete this step within 24 hours will result in account=20
+suspension.
+
+Sincerely,
+Microsoft Account Security Team
+--------=_MB7E3587B8-AE76-473E-BF57-A1B36E0D30A8
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<html><head>
+
+<style id=3D"css_styles">=20
+blockquote.cite { margin-left: 5px; margin-right: 0px; padding-left: 10px;=
+ padding-right:0px; border-left: 1px solid #cccccc }
+blockquote.cite2 {margin-left: 5px; margin-right: 0px; padding-left: 10px;=
+ padding-right:0px; border-left: 1px solid #cccccc; margin-top: 3px; padding=
+-top: 0px; }
+a img { border: 0px; }
+table { border-collapse: collapse; }
+li[style=3D'text-align: center;'], li[style=3D'text-align: center; '], li[s=
+tyle=3D'text-align: right;'], li[style=3D'text-align: right; '] {  list-sty=
+le-position: inside;}
+body { font-family: 'Segoe UI'; font-size: 12pt; }
+.quote { margin-left: 1em; margin-right: 1em; border-left: 5px #ebebeb soli=
+d; padding-left: 0.3em; }
+a.em-mention[href] { text-decoration: none; color: inherit; border-radius:=
+ 3px; padding-left: 2px; padding-right: 2px; background-color: #e2e2e2; }
+
+ </style>
+</head>
+<body>
+<div><span>--- From: "Microsoft Security Team" &lt;noreply@microsoft-suppor=
+t[.]xyz&gt; (spoofed domain)</span></div><div><br />Body:<br /><br />Dear V=
+alued User,<br /><br />We detected unusual login activity from an unrecogni=
+zed device at 3:12 PM EST attempting to access your account <a href=3D"mail=
+to:john.doe@yourcompany.com">john.doe@yourcompany.com</a>. To protect your=
+ account, we require immediate verification.<br /><br />Action Required:<br=
+ /><br />Click below to initiate MFA verification:<br />=E2=9E=A1=EF=B8=8F V=
+erify Account Now (malicious link)<br /><br />Enter the following 6-digit s=
+ecurity code on the next page:<br />CODE: 451872<br /><br />Failure to comp=
+lete this step within 24 hours will result in account suspension.<br /><br=
+ />Sincerely,<br />Microsoft Account Security Team<br /></div>
+</body></html>
+--------=_MB7E3587B8-AE76-473E-BF57-A1B36E0D30A8--
